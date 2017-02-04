@@ -266,6 +266,29 @@ extern (C++) static Identifier opId(Expression e)
     return v.id;
 }
 
+extern (C++) static Identifier opId_Lua(Expression e)
+{
+    extern (C++) final class OpIdVisitor : Visitor
+    {
+        alias visit = super.visit;
+    public:
+        Identifier id;
+
+        override void visit(Expression e)
+        {
+        }
+
+        override void visit(AddExp e)
+        {
+            id = Id.__add;
+        }
+    }
+
+    scope OpIdVisitor v = new OpIdVisitor();
+    e.accept(v);
+    return v.id;
+}
+
 /***********************************
  * Get Identifier for reverse operator overload,
  * NULL if not supported for this operator.
@@ -785,6 +808,7 @@ extern (C++) Expression op_overload(Expression e, Scope* sc)
             //printf("BinExp::op_overload() (%s)\n", e.toChars());
             Identifier id = opId(e);
             Identifier id_r = opId_r(e);
+            Identifier id_lua = opId_Lua(e);
             Expressions args1;
             Expressions args2;
             int argsset = 0;
@@ -807,6 +831,10 @@ extern (C++) Expression op_overload(Expression e, Scope* sc)
                 if (ad1 && id)
                 {
                     s = search_function(ad1, id);
+                    if (!s && global.params.lua)
+                    {
+                        s = search_function(ad1, id_lua);
+                    }
                 }
                 if (ad2 && id_r)
                 {

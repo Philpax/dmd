@@ -268,6 +268,9 @@ public:
         case LINKobjc:
             mc = 'Y';
             break;
+        case LINKlua:
+            mc = 'L';
+            break;
         default:
             assert(0);
         }
@@ -448,6 +451,7 @@ public:
             case LINKwindows:
             case LINKpascal:
             case LINKobjc:
+            case LINKlua:
                 buf.writestring(d.ident.toChars());
                 return;
             case LINKcpp:

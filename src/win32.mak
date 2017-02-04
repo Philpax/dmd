@@ -66,6 +66,7 @@ DMCROOT=$(DM_HOME)\dm
 C=backend
 TK=tk
 ROOT=root
+LUA=lua
 # Include directories
 INCLUDE=$(ROOT);$(DMCROOT)\include
 # Install directory
@@ -136,7 +137,7 @@ MFLAGS=-I$C;$(TK) $(OPT) -DMARS -cpp $(DEBUG) -e -wx -DTARGET_WINDOS=1 -DDM_TARG
 DFLAGS=$(DOPT) $(DMODEL) $(DDEBUG) -wi -version=MARS
 
 # Recursive make
-DMDMAKE=$(MAKE) -fwin32.mak C=$C TK=$(TK) ROOT=$(ROOT) MAKE="$(MAKE)" HOST_DC="$(HOST_DC)" DMODEL=$(DMODEL) CC="$(CC)" LIB="$(LIB)" OBJ_MSVC="$(OBJ_MSVC)"
+DMDMAKE=$(MAKE) -fwin32.mak C=$C TK=$(TK) ROOT=$(ROOT) MAKE="$(MAKE)" LUA="$(LUA)" HOST_DC="$(HOST_DC)" DMODEL=$(DMODEL) CC="$(CC)" LIB="$(LIB)" OBJ_MSVC="$(OBJ_MSVC)"
 
 ############################### Rule Variables ###############################
 
@@ -158,6 +159,9 @@ FRONT_SRCS=access.d aggregate.d aliasthis.d apply.d argtypes.d arrayop.d	\
 GLUE_SRCS=irstate.d toctype.d glue.d gluelayer.d todt.d tocsym.d toir.d dmsc.d \
 	tocvdebug.d s2ir.d toobj.d e2ir.d objc_glue_stubs.d eh.d iasm.d
 
+LUA_SRCS=$(LUA)/printgen.d $(LUA)/dast.d $(LUA)/expression.d $(LUA)/statement.d \
+	$(LUA)/declaration.d $(LUA)/ast.d $(LUA)/astgen.d $(LUA)/node.d $(LUA)/visitor.d
+
 BACK_HDRS=$C/bcomplex.d $C/cc.d $C/cdef.d $C/cgcv.d $C/code.d $C/cv4.d $C/dt.d $C/el.d $C/global.d \
 	$C/obj.d $C/oper.d $C/outbuf.d $C/rtlsym.d $C/code_x86.d $C/iasm.d \
 	$C/ty.d $C/type.d $C/exh.d $C/mach.d $C/mscoff.d $C/dwarf.d $C/dwarf2.d $C/xmm.d
@@ -166,7 +170,7 @@ TK_HDRS= $(TK)/dlist.d
 
 STRING_IMPORT_FILES= verstr.h ../res/default_ddoc_theme.ddoc
 
-DMD_SRCS=$(FRONT_SRCS) $(GLUE_SRCS) $(BACK_HDRS) $(TK_HDRS)
+DMD_SRCS=$(FRONT_SRCS) $(GLUE_SRCS) $(LUA_SRCS) $(BACK_HDRS) $(TK_HDRS)
 
 # Glue layer
 GLUEOBJ=

@@ -22,17 +22,20 @@ import core.stdc.stdio;
 private enum LOG = false;
 
 /***********************************************************
- * A namespace corresponding to a C++ namespace.
- * Implies extern(C++).
+ * A namespace corresponding to a C++/Lua namespace.
+ * Implies extern(C++/Lua).
  */
 extern (C++) final class Nspace : ScopeDsymbol
 {
+    private const LINK linkage;
+
     extern (D) this(Loc loc, Identifier ident, Dsymbols* members)
     {
         super(ident);
         //printf("Nspace::Nspace(ident = %s)\n", ident.toChars());
         this.loc = loc;
         this.members = members;
+        this.linkage = global.params.lua ? LINKlua : LINKcpp;
     }
 
     override Dsymbol syntaxCopy(Dsymbol s)
@@ -60,7 +63,7 @@ extern (C++) final class Nspace : ScopeDsymbol
             }
             assert(sc);
             sc = sc.push(this);
-            sc.linkage = LINKcpp; // namespaces default to C++ linkage
+            sc.linkage = linkage;
             sc.parent = this;
             foreach (s; *members)
             {
@@ -78,7 +81,7 @@ extern (C++) final class Nspace : ScopeDsymbol
         {
             assert(sc);
             sc = sc.push(this);
-            sc.linkage = LINKcpp; // namespaces default to C++ linkage
+            sc.linkage = linkage;
             sc.parent = this;
             foreach (s; *members)
             {
@@ -107,7 +110,7 @@ extern (C++) final class Nspace : ScopeDsymbol
         {
             assert(sc);
             sc = sc.push(this);
-            sc.linkage = LINKcpp; // note that namespaces imply C++ linkage
+            sc.linkage = linkage;
             sc.parent = this;
             foreach (s; *members)
             {
@@ -142,7 +145,7 @@ extern (C++) final class Nspace : ScopeDsymbol
         {
             assert(sc);
             sc = sc.push(this);
-            sc.linkage = LINKcpp;
+            sc.linkage = linkage;
             foreach (s; *members)
             {
                 static if (LOG)
@@ -171,7 +174,7 @@ extern (C++) final class Nspace : ScopeDsymbol
         if (members)
         {
             sc = sc.push(this);
-            sc.linkage = LINKcpp;
+            sc.linkage = linkage;
             foreach (s; *members)
             {
                 s.semantic3(sc);

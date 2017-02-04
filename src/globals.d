@@ -197,6 +197,8 @@ struct Param
     const(char)* resfile;
     const(char)* exefile;
     const(char)* mapfile;
+
+    bool lua;
 }
 
 struct Compiler
@@ -414,6 +416,7 @@ enum LINK : int
     windows,
     pascal,
     objc,
+    lua,
 }
 
 alias LINKdefault = LINK.def;
@@ -423,6 +426,7 @@ alias LINKcpp = LINK.cpp;
 alias LINKwindows = LINK.windows;
 alias LINKpascal = LINK.pascal;
 alias LINKobjc = LINK.objc;
+alias LINKlua = LINK.lua;
 
 enum CPPMANGLE : int
 {

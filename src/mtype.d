@@ -6460,7 +6460,7 @@ extern (C++) final class TypeFunction : TypeNext
             errors = true;
         }
 
-        if (tf.varargs == 1 && tf.linkage != LINKd && Parameter.dim(tf.parameters) == 0)
+        if (tf.varargs == 1 && tf.linkage != LINKd && tf.linkage != LINKlua && Parameter.dim(tf.parameters) == 0)
         {
             error(loc, "variadic functions with non-D linkage must have at least one parameter");
             errors = true;

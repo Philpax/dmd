@@ -1767,7 +1767,7 @@ extern (C++) bool functionParameters(Loc loc, Scope* sc, TypeFunction tf, Type t
                 default:
                     break;
                 }
-                if (tf.varargs == 1)
+                if (tf.linkage != LINKlua && tf.varargs == 1)
                 {
                     const(char)* p = tf.linkage == LINKc ? "extern(C)" : "extern(C++)";
                     if (arg.type.ty == Tarray)

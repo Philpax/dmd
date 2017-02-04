@@ -146,6 +146,7 @@ Msgtable[] msgtable =
     { "Pascal" },
     { "System" },
     { "Objective" },
+    { "Lua" },
 
     { "exit" },
     { "success" },
@@ -240,6 +241,7 @@ Msgtable[] msgtable =
     { "pow", "opPow" },
     { "pow_r", "opPow_r" },
     { "powass", "opPowAssign" },
+    { "__add" },
 
     { "classNew", "new" },
     { "classDelete", "delete" },

@@ -55,6 +55,8 @@ import ddmd.target;
 import ddmd.tokens;
 import ddmd.utils;
 
+import lua = ddmd.lua.astgen;
+
 
 /**
  * Print DMD's logo on stdout
@@ -470,6 +472,10 @@ private int tryMain(size_t argc, const(char)** argv)
             {
                 error(Loc(), "use -profile instead of -gt");
                 global.params.trace = true;
+            }
+            else if (strcmp(p + 1, "lua") == 0)
+            {
+                global.params.lua = true;
             }
             else if (strcmp(p + 1, "m32") == 0)
             {
@@ -1101,7 +1107,7 @@ Language changes listed by -transition=id:
     }
     if (global.params.useUnitTests)
         global.params.useAssert = true;
-    if (!global.params.obj || global.params.lib)
+    if (!global.params.obj || global.params.lib || global.params.lua)
         global.params.link = false;
     if (global.params.link)
     {
@@ -1144,6 +1150,10 @@ Language changes listed by -transition=id:
             //error("multiple source files, but only one .obj name");
             //fatal();
         }
+    }
+    if (global.params.lua)
+    {
+        global.params.betterC = true;
     }
 
     // Predefined version identifiers
@@ -1572,7 +1582,42 @@ Language changes listed by -transition=id:
             gendocfile(m);
         }
     }
-    if (!global.params.obj)
+    if (global.params.lua)
+    {
+        if (global.params.verbose)
+            fprintf(global.stdmsg, "lua-cg begin\n");
+
+        for (size_t i = 0; i < modules.dim; i++)
+        {
+            OutBuffer buf;
+
+            Module m = modules[i];
+            if (global.params.verbose)
+                fprintf(global.stdmsg, "code      %s\n", m.toChars());
+
+            lua.codegen(&buf, &m);
+
+            if (entrypoint && m == rootHasMain) {}
+               // genObjFile(entrypoint, global.params.multiobj);
+
+            const(char)* luaFileName;
+            
+            // Generate file name from first obj name
+            const(char)* n = m.srcfile.toChars();
+            n = FileName.name(n);
+            luaFileName = FileName.forceExt(n, "lua");
+
+            ensurePathToNameExists(Loc(), luaFileName);
+            auto outputFile = new File(luaFileName);
+            outputFile.setbuffer(buf.data, buf.offset);
+            outputFile._ref = 1;
+            writeFile(Loc(), outputFile);
+        }
+        
+        if (global.params.verbose)
+            fprintf(global.stdmsg, "lua-cg end\n");
+    }
+    else if (!global.params.obj)
     {
     }
     else if (global.params.oneobj)

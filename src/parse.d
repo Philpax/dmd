@@ -905,7 +905,7 @@ final class Parser : Lexer
                     a = parseBlock(pLastDecl, pAttrs);
                     if (idents)
                     {
-                        assert(link == LINKcpp);
+                        assert(link == LINKcpp || link == LINKlua);
                         assert(idents.dim);
                         for (size_t i = idents.dim; i;)
                         {
@@ -2214,6 +2214,32 @@ final class Parser : Lexer
             else if (id == Id.System)
             {
                 link = global.params.isWindows ? LINKwindows : LINKc;
+            }
+            else if (id == Id.Lua)
+            {
+                link = LINKlua;
+                if (token.value == TOKcomma)
+                {
+                    nextToken();
+                    idents = new Identifiers();
+                    while (1)
+                    {
+                        if (token.value == TOKidentifier)
+                        {
+                            Identifier idn = token.ident;
+                            idents.push(idn);
+                            nextToken();
+                            if (token.value == TOKdot)
+                            {
+                                nextToken();
+                                continue;
+                            }
+                        }
+                        else
+                            error("identifier expected for Lua namespace");
+                        break;
+                    }
+                }
             }
             else
             {
