@@ -915,7 +915,7 @@ final class Parser : Lexer
                                 a = new Dsymbols();
                                 a.push(s);
                             }
-                            s = new Nspace(linkLoc, id, a);
+                            s = new Nspace(linkLoc, id, a, link);
                         }
                         pAttrs.link = LINKdefault;
                     }

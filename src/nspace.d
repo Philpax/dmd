@@ -29,13 +29,13 @@ extern (C++) final class Nspace : ScopeDsymbol
 {
     private const LINK linkage;
 
-    extern (D) this(Loc loc, Identifier ident, Dsymbols* members)
+    extern (D) this(Loc loc, Identifier ident, Dsymbols* members, LINK linkage = LINKcpp)
     {
         super(ident);
         //printf("Nspace::Nspace(ident = %s)\n", ident.toChars());
         this.loc = loc;
         this.members = members;
-        this.linkage = global.params.lua ? LINKlua : LINKcpp;
+        this.linkage = linkage;
     }
 
     override Dsymbol syntaxCopy(Dsymbol s)
