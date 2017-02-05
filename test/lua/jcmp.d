@@ -21,6 +21,24 @@ final:
 
 extern ServerGlobal Server;
 
+enum VehicleSeat
+{
+    None = -1,
+    Driver,
+    Passenger,
+    Passenger1,
+    Passenger2,
+    Passenger3,
+    Passenger4,
+    MountedGun1,
+    MountedGun2,
+    RooftopStunt,
+    BellyStunt,
+    ClingFront,
+    ClingBack,
+    ClingHeliFront
+}
+
 final class Player
 {
 public:
@@ -33,7 +51,7 @@ public:
     Rotation GetAngle();
     void SetAngle(Rotation angle);
 
-    void EnterVehicle(Vehicle vehicle, uint seat);
+    void EnterVehicle(Vehicle vehicle, VehicleSeat seat);
 }
 
 final class Vehicle

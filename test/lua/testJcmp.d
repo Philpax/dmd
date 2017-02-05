@@ -43,7 +43,7 @@ bool ClientModuleLoad(EventData e)
     auto event = cast(jcmp.ClientModuleLoad)e;
     auto player = event.player;
     vehicle = Vehicle.Create(2, player.Position, player.Angle);
-    player.EnterVehicle(vehicle, 0);
+    player.EnterVehicle(vehicle, VehicleSeat.Driver);
 
     return true;
 }
