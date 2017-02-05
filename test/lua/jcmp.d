@@ -77,6 +77,10 @@ class PlayerChat : EventData
     string text;
 }
 
+class ModuleUnload : EventData
+{
+}
+
 class BaseEventManager
 {
 public:
@@ -85,6 +89,14 @@ final:
     alias CallbackF = extern(D) bool function(EventData);
     void Subscribe(string name, CallbackD callback);
     void Subscribe(string name, CallbackF callback);
+}
+
+extern(D) auto SubscribeType(EventDataType)(BaseEventManager events, bool function(EventDataType) callback)
+    if (is(EventDataType : EventData))
+{
+    return events.Subscribe(EventDataType.stringof, (EventData e) {
+        return callback(cast(EventDataType)e);
+    });
 }
 
 final class EventManager : BaseEventManager

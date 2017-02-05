@@ -21,9 +21,8 @@ import jcmp;
     player.SetAngle(angle);
 }
 
-bool ChatCommands(EventData e)
+bool ChatCommands(jcmp.PlayerChat event)
 {
-    auto event = cast(jcmp.PlayerChat)e;
     switch (event.text)
     {
     case "/up":
@@ -38,9 +37,8 @@ bool ChatCommands(EventData e)
 }
 
 Vehicle vehicle = null;
-bool ClientModuleLoad(EventData e)
+bool ClientModuleLoad(jcmp.ClientModuleLoad event)
 {
-    auto event = cast(jcmp.ClientModuleLoad)e;
     auto player = event.player;
     vehicle = Vehicle.Create(2, player.Position, player.Angle);
     player.EnterVehicle(vehicle, VehicleSeat.Driver);
@@ -50,9 +48,9 @@ bool ClientModuleLoad(EventData e)
 
 int main(string[] args)
 {
-    Events.Subscribe("PlayerChat", &ChatCommands);
-    Events.Subscribe("ClientModuleLoad", &ClientModuleLoad);
-    Events.Subscribe("ModuleUnload", (_) {
+    Events.SubscribeType!(jcmp.PlayerChat)(&ChatCommands);
+    Events.SubscribeType!(jcmp.ClientModuleLoad)(&ClientModuleLoad);
+    Events.SubscribeType!(jcmp.ModuleUnload)((_) {
         if (vehicle)
             vehicle.Remove();
 
