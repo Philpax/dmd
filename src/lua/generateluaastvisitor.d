@@ -2,7 +2,7 @@ module ddmd.lua.generateluaastvisitor;
 
 import core.stdc.stdio;
 
-import d = dast;
+import d = ddmd.lua.dast;
 import lua = ddmd.lua.ast;
 
 import ddmd.root.outbuffer;

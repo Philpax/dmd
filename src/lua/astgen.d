@@ -3,7 +3,7 @@ module ddmd.lua.astgen;
 import ddmd.lua.generateluaastvisitor;
 import ddmd.lua.printvisitor;
 
-import d = dast;
+import d = ddmd.lua.dast;
 import lua = ddmd.lua.ast;
 
 import ddmd.root.outbuffer;

@@ -3,7 +3,7 @@ module ddmd.lua.printgen;
 import core.stdc.stdio;
 import core.stdc.string;
 
-import d = dast;
+import d = ddmd.lua.dast;
 
 import ddmd.root.outbuffer;
 import ddmd.root.array;
