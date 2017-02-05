@@ -92,6 +92,16 @@ class Assign : Binary
     mixin Acceptor;
 }
 
+class Equal : Binary
+{
+    this(Expression operand1, Expression operand2)
+    {
+        super(operand1, operand2, "==");
+    }
+
+    mixin Acceptor;
+}
+
 class VariableExpr : Expression
 {
     Variable variable;
