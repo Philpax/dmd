@@ -578,4 +578,13 @@ public:
 
         this.node = new lua.StructLiteral(this.convert!(lua.Struct)(expr.sd), fields);
     }
+
+    override void visit(d.PtrExp expr)
+    {
+        auto e = expr.e1;
+        if (cast(d.TypeDelegate)e.type || cast(d.TypeFunction)e.type)
+            this.convert!(lua.Expression)(e);
+        else
+            this.visit(cast(d.Expression)expr);
+    }
 }
