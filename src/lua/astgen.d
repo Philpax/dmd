@@ -274,34 +274,71 @@ public:
         this.node = new lua.GroupStmt(members);
     }
 
+    lua.Statement convertConditionalBody(d.Statement stmt)
+    {
+        if (!stmt)
+            return null;
+
+        if (auto scopeStmt = stmt.isScopeStatement())
+        {
+            if (scopeStmt.statement.isCompoundStatement())
+                return this.convert!(lua.Statement)(scopeStmt.statement);
+            else
+                return new lua.Compound([this.convert!(lua.Statement)(scopeStmt.statement)]);
+        }
+        else if (auto ifStmt = stmt.isIfStatement())
+        {
+            return this.convert!(lua.Statement)(stmt);
+        }
+        else
+        {
+            return new lua.Compound([this.convert!(lua.Statement)(stmt)]);
+        }
+    }
+
     override void visit(d.IfStatement stmt)
     {
-        lua.Statement convertBody(d.Statement stmt)
-        {
-            if (!stmt)
-                return null;
-
-            if (auto scopeStmt = stmt.isScopeStatement())
-            {
-                if (scopeStmt.statement.isCompoundStatement())
-                    return this.convert!(lua.Statement)(scopeStmt.statement);
-                else
-                    return new lua.Compound([this.convert!(lua.Statement)(scopeStmt.statement)]);
-            }
-            else if (auto ifStmt = stmt.isIfStatement())
-            {
-                return this.convert!(lua.Statement)(stmt);
-            }
-            else
-            {
-                return new lua.Compound([this.convert!(lua.Statement)(stmt)]);
-            }
-        }
-
         this.node = new lua.If(
             this.convert!(lua.Expression)(stmt.condition),
-            convertBody(stmt.ifbody), convertBody(stmt.elsebody)
+            this.convertConditionalBody(stmt.ifbody),
+            this.convertConditionalBody(stmt.elsebody)
         );
+    }
+
+    override void visit(d.SwitchStatement stmt)
+    {
+        if (stmt.cases is null || (*stmt.cases)[].length == 0)
+        {
+            this.node = null;
+            return;
+        }
+
+        // Iterate over each case statement and generate if statements
+        lua.If[] statements;
+        foreach (caseStmt; (*stmt.cases))
+        {
+            statements ~= new lua.If(
+                new lua.Equal(
+                    this.convert!(lua.Expression)(stmt.condition),
+                    this.convert!(lua.Expression)(caseStmt.exp)
+                ),
+                this.convertConditionalBody(caseStmt.statement),
+                null
+            ); 
+        }
+
+        // Link each if statement's else to the next if statement
+        foreach (index; 0..(statements.length-1))
+            statements[index]._else = statements[index+1];
+
+        // Add default onto the last else
+        if (stmt.sdefault)
+        {
+            statements[$-1]._else =
+                this.convertConditionalBody(stmt.sdefault.statement);
+        }
+
+        this.node = statements[0];
     }
 
     // Declarations

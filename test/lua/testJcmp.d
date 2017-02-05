@@ -24,18 +24,15 @@ import jcmp;
 bool ChatCommands(EventData e)
 {
     auto event = cast(jcmp.PlayerChat)e;
-    if (event.text == "/up")
+    switch (event.text)
     {
+    case "/up":
         event.player.Position = event.player.Position + Vector3(0, 100, 0);
         return false;
-    }
-    else if (event.text == "/down")
-    {
+    case "/down":
         event.player.Position = event.player.Position + Vector3(0, -100, 0);
         return false;
-    }
-    else
-    {
+    default:
         return true;
     }
 }
