@@ -91,7 +91,7 @@ final:
     void Subscribe(string name, CallbackF callback);
 }
 
-extern(D) auto SubscribeType(EventDataType)(BaseEventManager events, bool function(EventDataType) callback)
+extern(D) auto AutoSubscribe(EventDataType)(BaseEventManager events, bool function(EventDataType) callback)
     if (is(EventDataType : EventData))
 {
     return events.Subscribe(EventDataType.stringof, (EventData e) {

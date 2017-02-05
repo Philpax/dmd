@@ -48,9 +48,9 @@ bool ClientModuleLoad(jcmp.ClientModuleLoad event)
 
 int main(string[] args)
 {
-    Events.SubscribeType!(jcmp.PlayerChat)(&ChatCommands);
-    Events.SubscribeType!(jcmp.ClientModuleLoad)(&ClientModuleLoad);
-    Events.SubscribeType!(jcmp.ModuleUnload)((_) {
+    Events.AutoSubscribe(&ChatCommands);
+    Events.AutoSubscribe(&ClientModuleLoad);
+    Events.Subscribe("ModuleUnload", (_) {
         if (vehicle)
             vehicle.Remove();
 
