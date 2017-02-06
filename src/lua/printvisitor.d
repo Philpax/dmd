@@ -364,4 +364,10 @@ public:
     {
         this.write("nil");
     }
+
+    override void visit(lua.ArrayLength a)
+    {
+        this.write("#");
+        a.expr.accept(this);
+    }
 }

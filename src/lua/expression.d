@@ -199,3 +199,15 @@ class Nil : Expression
 {
     mixin Acceptor;
 }
+
+class ArrayLength : Expression
+{
+    Expression expr;
+
+    this(Expression expr)
+    {
+        this.expr = expr;
+    }
+
+    mixin Acceptor;
+}

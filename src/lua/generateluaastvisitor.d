@@ -635,4 +635,11 @@ public:
     {
         this.node = new lua.Nil();
     }
+
+    override void visit(d.ArrayLengthExp expr)
+    {
+        this.node = new lua.ArrayLength(
+            this.convert!(lua.Expression)(expr.e1)
+        );
+    }
 }
