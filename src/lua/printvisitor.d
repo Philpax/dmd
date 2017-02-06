@@ -188,6 +188,11 @@ public:
         this.writeIfStatement(i);
     }
 
+    override void visit(lua.Break b)
+    {
+        this.writeLine("break");
+    }
+
     // Declarations
     override void visit(lua.UnimplementedDecl u)
     {

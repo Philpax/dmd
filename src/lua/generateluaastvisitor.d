@@ -341,6 +341,11 @@ public:
         this.node = statements[0];
     }
 
+    override void visit(d.BreakStatement _break)
+    {
+        this.node = new lua.Break();
+    }
+
     // Declarations
     override void visit(d.Declaration decl)
     {

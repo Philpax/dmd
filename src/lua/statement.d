@@ -112,3 +112,8 @@ class If : Statement
 
     mixin Acceptor;
 }
+
+class Break : Statement
+{
+    mixin Acceptor;
+}
