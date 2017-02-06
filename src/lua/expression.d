@@ -82,25 +82,20 @@ class Binary : Expression
     mixin Acceptor;
 }
 
-class Assign : Binary
+mixin template BinaryNode(string Name, string Operator)
 {
-    this(Expression operand1, Expression operand2)
+    mixin(`class ` ~ Name ~ ` : Binary
     {
-        super(operand1, operand2, "=");
-    }
+        this(Expression operand1, Expression operand2)
+        {
+            super(operand1, operand2, Operator);
+        }
 
-    mixin Acceptor;
+        mixin Acceptor;
+    }`);
 }
 
-class Equal : Binary
-{
-    this(Expression operand1, Expression operand2)
-    {
-        super(operand1, operand2, "==");
-    }
-
-    mixin Acceptor;
-}
+mixin BinaryNode!("Equal", "==");
 
 class VariableExpr : Expression
 {
