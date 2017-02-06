@@ -370,4 +370,12 @@ public:
         this.write("#");
         a.expr.accept(this);
     }
+
+    override void visit(lua.Index i)
+    {
+        i.expr.accept(this);
+        this.write("[");
+        i.index.accept(this);
+        this.write("]");
+    }
 }

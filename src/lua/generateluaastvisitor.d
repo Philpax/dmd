@@ -642,4 +642,16 @@ public:
             this.convert!(lua.Expression)(expr.e1)
         );
     }
+
+    override void visit(d.IndexExp expr)
+    {
+        // Add 1 to the index because Lua has 1-based indexing
+        this.node = new lua.Index(
+            this.convert!(lua.Expression)(expr.e1),
+            new lua.Add(
+                this.convert!(lua.Expression)(expr.e2),
+                new lua.Integer(1, lua.Integer.Type.Integer)
+            )
+        );
+    }
 }

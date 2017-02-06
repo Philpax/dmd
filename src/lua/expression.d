@@ -211,3 +211,17 @@ class ArrayLength : Expression
 
     mixin Acceptor;
 }
+
+class Index : Expression
+{
+    Expression expr;
+    Expression index;
+
+    this(Expression expr, Expression index)
+    {
+        this.expr = expr;
+        this.index = index;
+    }
+
+    mixin Acceptor;
+}
