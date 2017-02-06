@@ -27,7 +27,7 @@ final class ServerClass
 public:
 final:
     int GetPlayerCount();
-    Player delegate() GetPlayers();
+    Iterator!Player GetPlayers();
 }
 extern ServerClass Server;
 
