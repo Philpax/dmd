@@ -242,7 +242,7 @@ public:
 
         // Create a while body with the existing body; if there's an increment,
         // tack it on as a compound statement (so that the indentation will match)
-        auto bodyStmts = [this.convert!(lua.Statement)(stmt._body)];
+        auto bodyStmts = [this.convertConditionalBody(stmt._body)];
         if (stmt.increment)
         {
             bodyStmts ~= new lua.Compound([
