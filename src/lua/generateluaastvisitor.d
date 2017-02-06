@@ -660,6 +660,22 @@ public:
         );
     }
 
+    override void visit(d.SliceExp expr)
+    {
+        auto e = expr.e1;
+        // If this is an array, and it's an identity slice, pass it through
+        // Otherwise, treat it as an unsupported node
+        if (e.type && (e.type.ty == d.Tsarray || e.type.ty == d.Tarray) && 
+            expr.upr is null && expr.lwr is null)
+        {
+            this.node = this.convert!(lua.Expression)(e);
+        }
+        else
+        {
+            this.visit(cast(d.Expression)expr);
+        }
+    }
+
     override void visit(d.ArrayLiteralExp expr)
     {
         lua.Expression[] elements;
