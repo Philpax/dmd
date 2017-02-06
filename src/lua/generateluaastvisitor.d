@@ -416,6 +416,10 @@ public:
                     auto assignExpr = cast(d.AssignExp)exprInit.exp;
                     init = this.convert!(lua.Expression)(assignExpr.e2);
                 } 
+                else
+                {
+                    init = this.convert!(lua.Expression)(exprInit.exp);
+                }
             }
         } 
         this.node = new lua.Variable(
