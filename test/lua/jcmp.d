@@ -12,14 +12,32 @@ struct Rotation
     float yaw, pitch, roll;
 }
 
-final class ServerGlobal
+struct Color
+{
+    ubyte r, g, b;
+}
+
+struct Weapon
+{
+    uint id;
+}
+
+final class ServerClass
 {
 public:
 final:
     int GetPlayerCount();
+    Player delegate() GetPlayers();
 }
+extern ServerClass Server;
 
-extern ServerGlobal Server;
+final class ChatClass
+{
+public:
+final:
+    void Broadcast(string message, Color color);
+}
+extern ChatClass Chat;
 
 enum VehicleSeat
 {
@@ -52,6 +70,13 @@ public:
     void SetAngle(Rotation angle);
 
     void EnterVehicle(Vehicle vehicle, VehicleSeat seat);
+    void GiveWeapon(uint slot, Weapon weapon);
+
+    void SendChatMessage(string message, Color color);
+
+    void ClearInventory();
+
+    string GetName();
 }
 
 final class Vehicle
