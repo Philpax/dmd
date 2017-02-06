@@ -225,3 +225,15 @@ class Index : Expression
 
     mixin Acceptor;
 }
+
+class ArrayLiteral : Expression
+{
+    Expression[] elements;
+
+    this(Expression[] elements)
+    {
+        this.elements = elements;
+    }
+
+    mixin Acceptor;
+}

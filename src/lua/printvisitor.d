@@ -378,4 +378,19 @@ public:
         i.index.accept(this);
         this.write("]");
     }
+
+    override void visit(lua.ArrayLiteral a)
+    {
+        bool first = true;
+        this.write("{");
+        foreach (element; a.elements)
+        {
+            if (!first)
+                this.write(", ");
+
+            element.accept(this);
+            first = false;
+        }
+        this.write("}");
+    }
 }

@@ -654,4 +654,15 @@ public:
             )
         );
     }
+
+    override void visit(d.ArrayLiteralExp expr)
+    {
+        lua.Expression[] elements;
+        if (expr.elements)
+        {
+            foreach (elem; (*expr.elements)[])
+                elements ~= this.convert!(lua.Expression)(elem);
+        }
+        this.node = new lua.ArrayLiteral(elements);
+    }
 }
