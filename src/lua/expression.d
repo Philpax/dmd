@@ -96,6 +96,10 @@ mixin template BinaryNode(string Name, string Operator)
 }
 
 mixin BinaryNode!("Equal", "==");
+mixin BinaryNode!("NotEqual", "~=");
+mixin BinaryNode!("Concat", "..");
+mixin BinaryNode!("Assign", "=");
+mixin BinaryNode!("Add", "+");
 
 class VariableExpr : Expression
 {
