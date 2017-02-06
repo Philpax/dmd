@@ -485,6 +485,42 @@ public:
         );
     }
 
+    mixin template BinOp(DClass, LuaClass)
+    {
+        override void visit(DClass expr)
+        {
+            this.node = new LuaClass(
+                this.convert!(lua.Expression)(expr.e1),
+                this.convert!(lua.Expression)(expr.e2)
+            );
+        }
+    }
+
+    mixin template BinOpOverload2(DClass, d.TOK Tok1, LuaClass1, d.TOK Tok2, LuaClass2)
+    {
+        override void visit(DClass expr)
+        {
+            if (expr.op == Tok1)
+            {
+                this.node = new LuaClass1(
+                    this.convert!(lua.Expression)(expr.e1),
+                    this.convert!(lua.Expression)(expr.e2)
+                );
+            }
+            else if (expr.op == Tok2)
+            {
+                this.node = new LuaClass2(
+                    this.convert!(lua.Expression)(expr.e1),
+                    this.convert!(lua.Expression)(expr.e2)
+                );
+            }
+            else
+            {
+                assert(0);
+            }
+        }
+    }
+
     override void visit(d.VarExp expr)
     {
         this.node = new lua.VariableExpr(this.convert!(lua.Variable)(expr.var));
