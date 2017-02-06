@@ -66,15 +66,36 @@ class EventData
 {
 }
 
-class ClientModuleLoad : EventData
+class PlayerEvent : EventData
 {
     Player player;
 }
 
-class PlayerChat : EventData
+class ClientModuleLoad : PlayerEvent
 {
-    Player player;
+}
+
+class PlayerChat : PlayerEvent
+{
     string text;
+}
+
+class PlayerSpawn : PlayerEvent
+{
+}
+
+class PlayerDeath : PlayerEvent
+{
+    Player killer;
+    uint reason;
+}
+
+class PlayerQuit : PlayerEvent
+{
+}
+
+class ModuleLoad : EventData
+{
 }
 
 class ModuleUnload : EventData
