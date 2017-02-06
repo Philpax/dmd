@@ -521,6 +521,13 @@ public:
         }
     }
 
+    mixin BinOp!(d.AssignExp, lua.Assign);
+    mixin BinOpOverload2!(d.EqualExp,
+            d.TOKequal, lua.Equal, d.TOKnotequal, lua.NotEqual);
+    mixin BinOpOverload2!(d.IdentityExp,
+            d.TOKidentity, lua.Equal, d.TOKnotidentity, lua.NotEqual);
+    mixin BinOp!(d.CatExp, lua.Concat);
+
     override void visit(d.VarExp expr)
     {
         this.node = new lua.VariableExpr(this.convert!(lua.Variable)(expr.var));
