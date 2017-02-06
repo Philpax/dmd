@@ -421,6 +421,11 @@ public:
                     init = this.convert!(lua.Expression)(exprInit.exp);
                 }
             }
+        }
+        else
+        {
+            if (decl.type.ty == d.Tarray || decl.type.ty == d.Tsarray)
+                init = new lua.ArrayLiteral([]);
         } 
         this.node = new lua.Variable(
             this.convert!(lua.Declaration)(decl.parent),
