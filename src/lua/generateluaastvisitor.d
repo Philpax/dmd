@@ -388,7 +388,7 @@ public:
         this.storeNode(func, luaFunction);
 
         // HACK: Grab the definition of math.floor for later use
-        if (func.parent && func.parent.ident.toDString() == "math" && name == "floor")
+        if (func.parent && func.parent.ident && func.parent.ident.toDString() == "math" && name == "floor")
             this.mathFloor = luaFunction;
 
         luaFunction.parent = this.convert!(lua.Declaration)(func.parent);
