@@ -630,4 +630,9 @@ public:
         else
             this.visit(cast(d.Expression)expr);
     }
+
+    override void visit(d.NullExp expr)
+    {
+        this.node = new lua.Nil();
+    }
 }

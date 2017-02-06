@@ -194,3 +194,8 @@ class StructLiteral : Expression
 
     mixin Acceptor;
 }
+
+class Nil : Expression
+{
+    mixin Acceptor;
+}

@@ -359,4 +359,9 @@ public:
         }
         this.write(")");
     }
+
+    override void visit(lua.Nil n)
+    {
+        this.write("nil");
+    }
 }
