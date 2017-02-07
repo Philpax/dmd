@@ -241,19 +241,24 @@ public:
             resultStmts ~= this.convert!(lua.Statement)(stmt._init);
 
         // Create a while body with the existing body; if there's an increment,
-        // tack it on as a compound statement (so that the indentation will match)
-        auto bodyStmts = [this.convertConditionalBody(stmt._body)];
+        // add it to the generated compound statement
+        auto bodyRawStmt = this.convertConditionalBody(stmt._body);
+        lua.Compound bodyStmt;
+        if (auto compoundStmt = cast(lua.Compound)bodyRawStmt)
+            bodyStmt = compoundStmt;
+        else
+            bodyStmt = new lua.Compound([bodyRawStmt]);
+
         if (stmt.increment)
         {
-            bodyStmts ~= new lua.Compound([
-                new lua.ExpressionStmt(this.convert!(lua.Expression)(stmt.increment))
-            ]);
+            bodyStmt.members ~= new lua.ExpressionStmt(
+                this.convert!(lua.Expression)(stmt.increment)
+            );
         }
 
         // Add our while to the final result
         resultStmts ~= new lua.While(
-            this.convert!(lua.Expression)(stmt.condition),
-            new lua.GroupStmt(bodyStmts)
+            this.convert!(lua.Expression)(stmt.condition), bodyStmt
         ); 
 
         this.node = new lua.GroupStmt(resultStmts);
