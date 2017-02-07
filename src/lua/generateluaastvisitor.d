@@ -291,7 +291,7 @@ public:
             else
                 return new lua.Compound([this.convert!(lua.Statement)(scopeStmt.statement)]);
         }
-        else if (auto ifStmt = stmt.isIfStatement())
+        else if (stmt.isIfStatement() || stmt.isCompoundStatement())
         {
             return this.convert!(lua.Statement)(stmt);
         }
