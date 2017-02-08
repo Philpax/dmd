@@ -77,6 +77,8 @@ public:
     void ClearInventory();
 
     string GetName();
+
+    bool __eq(Player rhs) const;
 }
 
 final class Vehicle

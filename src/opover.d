@@ -1166,7 +1166,7 @@ extern (C++) Expression op_overload(Expression e, Scope* sc)
             {
                 ClassDeclaration cd1 = t1.isClassHandle();
                 ClassDeclaration cd2 = t2.isClassHandle();
-                if (!(cd1.cpp || cd2.cpp))
+                if (!(cd1.cpp || cd2.cpp) && !(cd1.lua || cd2.lua))
                 {
                     /* Rewrite as:
                      *      .object.opEquals(e1, e2)
@@ -1192,6 +1192,16 @@ extern (C++) Expression op_overload(Expression e, Scope* sc)
                     result = result.semantic(sc);
                     return;
                 }
+            }
+
+            if (global.params.lua)
+            {
+                // If we find a Lua __eq, do not rewrite it.
+                // This heuristic could be better - perhaps
+                // checking for Lua linkage? Not too big a deal,
+                // if you're using __eq it "just works."
+                if (compare_overload(e, sc, Id.__eq))
+                    return;
             }
 
             result = compare_overload(e, sc, Id.eq);

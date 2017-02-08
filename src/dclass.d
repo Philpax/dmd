@@ -218,6 +218,7 @@ extern (C++) class ClassDeclaration : AggregateDeclaration
 
     bool com;           // true if this is a COM class (meaning it derives from IUnknown)
     bool cpp;           // true if this is a C++ interface
+    bool lua;           // true if this is a Lua class
     bool isscope;       // true if this is a scope class
     Abstract isabstract;
     int inuse;          // to prevent recursive attempts
@@ -497,6 +498,8 @@ extern (C++) class ClassDeclaration : AggregateDeclaration
 
             if (sc.linkage == LINKcpp)
                 cpp = true;
+            if (sc.linkage == LINKlua)
+                lua = true;
             if (sc.linkage == LINKobjc)
                 objc_ClassDeclaration_semantic_PASSinit_LINKobjc(this);
         }
@@ -717,6 +720,8 @@ extern (C++) class ClassDeclaration : AggregateDeclaration
                     com = true;
                 if (baseClass.isCPPclass())
                     cpp = true;
+                if (baseClass.isLuaClass())
+                    lua = true;
                 if (baseClass.isscope)
                     isscope = true;
                 enclosing = baseClass.enclosing;
@@ -1407,6 +1412,11 @@ extern (C++) class ClassDeclaration : AggregateDeclaration
         return cpp;
     }
 
+    final bool isLuaClass() const
+    {
+        return lua;
+    }
+
     bool isCPPinterface() const
     {
         return false;
@@ -1658,6 +1668,9 @@ extern (C++) final class InterfaceDeclaration : ClassDeclaration
 
             if (!baseclasses.dim && sc.linkage == LINKcpp)
                 cpp = true;
+
+            if (!baseclasses.dim && sc.linkage == LINKlua)
+                lua = true;
 
             objc_InterfaceDeclaration_semantic_objcExtern(this, sc);
 

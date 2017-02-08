@@ -242,6 +242,7 @@ Msgtable[] msgtable =
     { "pow_r", "opPow_r" },
     { "powass", "opPowAssign" },
     { "__add" },
+    { "__eq" },
 
     { "classNew", "new" },
     { "classDelete", "delete" },
