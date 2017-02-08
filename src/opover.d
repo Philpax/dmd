@@ -814,6 +814,7 @@ extern (C++) Expression op_overload(Expression e, Scope* sc)
             int argsset = 0;
             AggregateDeclaration ad1 = isAggregate(e.e1.type);
             AggregateDeclaration ad2 = isAggregate(e.e2.type);
+            bool luaOverload = false;
             if (e.op == TOKassign && ad1 == ad2)
             {
                 StructDeclaration sd = ad1.isStructDeclaration();
@@ -834,6 +835,8 @@ extern (C++) Expression op_overload(Expression e, Scope* sc)
                     if (!s && global.params.lua)
                     {
                         s = search_function(ad1, id_lua);
+                        if (s)
+                            luaOverload = true;
                     }
                 }
                 if (ad2 && id_r)
@@ -949,6 +952,12 @@ extern (C++) Expression op_overload(Expression e, Scope* sc)
                 {
                     // Rewrite (e1 op e2) as e2.opfunc_r(e1)
                     result = build_overload(e.loc, sc, e.e2, e.e1, m.lastf ? m.lastf : s_r);
+                }
+                // Don't replace with a call if it's a Lua op overload 
+                if (luaOverload)
+                {
+                    e.type = result.type;
+                    result = e;
                 }
                 return;
             }

@@ -6,27 +6,29 @@ Events = {
 }
 
 function Vector3(x, y, z)
-    local function __add(x, y)
-        return {x = x.x + y.x, y = x.y + y.y, z = x.z + y.z, __add = __add} 
+    local mt = {}
+    mt.__add = function(x, y)
+        local t = {x = x.x + y.x, y = x.y + y.y, z = x.z + y.z}
+        setmetatable(t, mt)
+        return t
     end
-    return {
-        x = x,
-        y = y, 
-        z = z,
-        __add = __add
-    }
+
+    local t = {x = x, y = y, z = z}
+    setmetatable(t, mt)
+    return t
 end
 
 function Color(r, g, b)
-    local function __add(r, g)
-        return {r = r.r + g.r, g = r.g + g.g, b = r.b + g.b, __add = __add} 
+    local mt = {}
+    mt.__add = function(x, y)
+        local t = {r = x.r + y.r, g = x.g + y.g, b = x.b + y.b} 
+        setmetatable(t, mt)
+        return t
     end
-    return {
-        r = r,
-        g = g, 
-        b = b,
-        __add = __add
-    }
+
+    local t = {r = r, g = g, b = b}
+    setmetatable(t, mt)
+    return t
 end
 
 function Weapon(id)
