@@ -7,7 +7,7 @@ import ddmd.lua.expression;
 
 class Declaration : Node
 {
-    Declaration parent;
+    @NoVisit Declaration parent;
 
     this(Declaration parent)
     {
@@ -46,7 +46,7 @@ class NamedDeclaration : Declaration
 class Module : NamedDeclaration
 {
     Declaration[] members;
-    Module[] imports;
+    @NoVisit Module[] imports;
 
     this(Declaration parent, string name, Declaration[] members)
     {
@@ -160,7 +160,7 @@ class Class : Aggregrate
 
 class Import : Declaration
 {
-    Module mod;
+    @NoVisit Module mod;
 
     this(Declaration parent, Module mod)
     {

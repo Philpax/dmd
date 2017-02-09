@@ -27,6 +27,16 @@ mixin template Acceptor()
     }
 }
 
+class RecursiveVisitor : Visitor
+{
+public:
+    alias visit = Visitor.visit;
+
+    mixin(generateRecursiveVisitMethods!Statement);
+    mixin(generateRecursiveVisitMethods!Declaration);
+    mixin(generateRecursiveVisitMethods!Expression);
+}
+
 private:
 string generateVisitMethods(BaseClass)()
 {
@@ -43,17 +53,73 @@ string generateVisitMethods(BaseClass)()
 
         static if (is(Member : BaseClass))
         {
-            alias baseClassesTuple = BaseClassesTuple!Member;
-
+            auto baseClass = BaseClassesTuple!Member[0].stringof;
             output ~=
 `
     void visit(%s value)
     {
-        import std.traits : getSymbolsByUDA;
-
         this.visit(cast(%s)value);
     }
-`.format(Member.stringof, baseClassesTuple[0].stringof);
+`.format(Member.stringof, baseClass);
+        }
+    }
+
+    return output;
+}
+
+enum NoVisit;
+string generateRecursiveVisitMethods(BaseClass)()
+{
+    import std.typecons : Identity;
+    import std.traits : BaseClassesTuple, hasUDA;
+    import std.string : format;
+    import std.algorithm : map;
+    import std.array : join;
+
+    alias Module = Identity!(__traits(parent, BaseClass));
+
+    string[] GenerateFieldAcceptors(Member)()
+    {
+        string[] statements;
+        foreach (fieldName; __traits(allMembers, Member))
+        {
+            alias Field = Identity!(__traits(getMember, Member, fieldName));
+            static if (!hasUDA!(Field, NoVisit))
+            {
+                static if (is(typeof(Field) : Node))
+                {
+                    statements ~= `if (value.` ~ fieldName ~ ` !is null)`;
+                    statements ~= `    value.` ~ fieldName ~ `.accept(this);`;
+                }
+                else static if (is(typeof(Field) T : U[], U : Node))
+                {
+                    statements ~= `foreach (child; value.` ~ fieldName ~ `)`;
+                    statements ~= `    if (child !is null)`;
+                    statements ~= `        child.accept(this);`;
+                }
+            }
+        }
+        return statements;
+    }
+
+    string output;
+    foreach (memberName; __traits(allMembers, Module))
+    {
+        alias Member = Identity!(__traits(getMember, Module, memberName));
+
+        static if (is(Member : BaseClass))
+        {
+            auto statements = GenerateFieldAcceptors!Member();
+            auto baseClass = BaseClassesTuple!Member[0].stringof;
+            statements ~= `this.visit(cast(%s)value);`.format(baseClass);
+
+            output ~=
+`
+    override void visit(%s value)
+    {
+%s
+    }
+`.format(Member.stringof, statements.map!(a => "        " ~ a).join("\n"));
         }
     }
 
