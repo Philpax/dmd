@@ -23,6 +23,7 @@ private:
         import std.string : format;
 
         buf.writestring(fmt.format(args));
+        this.written = true;
     }
 
     void writeLine(Args...)(string fmt, Args args)
@@ -85,6 +86,7 @@ private:
 
 public:
     alias visit = lua.Visitor.visit;
+    bool written = false;
 
     this(OutBuffer* buf)
     {
@@ -237,8 +239,10 @@ public:
         auto len = this.pushScope(m);
         foreach (member; m.members)
         {
+            this.written = false;
             member.accept(this);
-            this.writeLine();
+            if (this.written)
+                this.writeLine();
         }
         this.resetScope(len);
     }
