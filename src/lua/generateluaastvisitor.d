@@ -208,12 +208,6 @@ public:
         {
             foreach (member; (*stmt.statements)[])
             {
-                if (member.isCompoundStatement() && stmt.statements.dim == 1)
-                {
-                    member.accept(this);
-                    return;
-                }
-
                 auto luaNode = this.convert!(lua.Statement)(member);
                 if (luaNode)
                     members ~= luaNode;
