@@ -6,6 +6,7 @@ class FlattenBlockVisitor : lua.RecursiveVisitor
 {
 public:
     alias visit = lua.RecursiveVisitor.visit;
+    override void visit(lua.Node) {}
 
     void rewrite(T)(T stmt)
         if (is(typeof(stmt.members) == lua.Statement[]))
@@ -34,7 +35,6 @@ public:
         }
     }
 
-    override void visit(lua.Node) {}
 
     override void visit(lua.Compound c)
     {
@@ -45,4 +45,41 @@ public:
     {
         this.rewrite(g);
     }
+
+    void rewrite(T)(T decl)
+        if (is(typeof(decl.members) == lua.Declaration[]))
+    {
+        bool rebuild = false;
+        foreach (member; decl.members)
+        {
+            member.accept(this);
+            if (cast(lua.GroupDecl)member)
+                rebuild = true;
+        }
+
+        if (rebuild)
+        {
+            lua.Declaration[] declarations;
+            foreach (member; decl.members)
+            {
+                if (auto group = cast(lua.GroupDecl)member)
+                    declarations ~= group.members;
+                else
+                    declarations ~= member;
+            }
+            decl.members = declarations;
+        }
+    }
+
+    override void visit(lua.Module m)
+    {
+        this.rewrite(m);
+    }
+
+    override void visit(lua.GroupDecl g)
+    {
+        this.rewrite(g);
+    }
+
+
 }
