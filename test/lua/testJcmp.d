@@ -1,5 +1,6 @@
 //!RUNTIME: runtime-jcmpTest.lua
 import jcmp;
+@safe:
 
 @property Vector3 Position(Player player)
 {

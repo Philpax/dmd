@@ -1,5 +1,6 @@
-static import math;
-static import io;
+import math;
+import io;
+@safe:
 
 int main(string[] args)
 {

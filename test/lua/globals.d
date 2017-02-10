@@ -1,4 +1,5 @@
 extern (Lua):
+@safe:
 
 void print(...);
 double tonumber(string s);

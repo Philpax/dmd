@@ -1,4 +1,4 @@
-void main()
+void main() @safe
 {
     int n0 = 1;
     int n1 = 1;

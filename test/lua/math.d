@@ -1,4 +1,5 @@
 extern (Lua, math):
+@safe:
 
 double random();
 int random(int m);
