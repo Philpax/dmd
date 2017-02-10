@@ -1,5 +1,6 @@
 module ddmd.lua.dast;
 
+public import ddmd.attrib;
 public import ddmd.dclass;
 public import ddmd.declaration;
 public import ddmd.dimport;

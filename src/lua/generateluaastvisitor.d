@@ -101,6 +101,35 @@ public:
         luaModule.members = members;
     }
 
+    override void visit(d.AttribDeclaration attrib)
+    {
+        if (attrib.decl)
+        {
+            auto node = new lua.GroupDecl(
+                this.convert!(lua.Declaration)(attrib.parent), []);
+            this.storeNode(attrib, node);
+            lua.Declaration[] decls;
+            foreach (decl; (*attrib.decl)[])
+            {
+                // Don't try converting declarations belonging to non-compiled
+                // files
+                bool skippableDecl = !decl.isVarDeclaration();
+                if (decl.semanticRun < d.PASSsemantic3done && skippableDecl)
+                    continue;
+
+                auto luaDecl = this.convert!(lua.Declaration)(decl);
+                if (luaDecl)
+                    decls ~= luaDecl;
+            }
+            node.members = decls;
+            this.node = node;
+        }
+        else
+        {
+            this.node = null;
+        }
+    }
+
     override void visit(d.Nspace nspace)
     {
         auto luaNamespace = new lua.Namespace(
