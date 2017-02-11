@@ -4,6 +4,7 @@ import std.process;
 import std.algorithm;
 import std.regex;
 import std.path;
+import std.getopt;
 
 enum WorkDirectory = "lua";
 
@@ -12,8 +13,13 @@ auto exec(string program, string[] args)
     return ([program] ~ args).execute(null, Config.none, size_t.max, WorkDirectory);
 }
 
-void main()
+void main(string[] args)
 {
+    bool verbose = false;
+    auto helpInformation = args.getopt(
+        "verbose|v", "Always print test stage output", &verbose
+    );
+
     struct Test
     {
         string name;
@@ -47,6 +53,8 @@ void main()
             write("\033[92m");
             writeln("OK");
             write("\033[0m");
+            if (verbose)
+                writeln(ret.output);
         }
         else
         {
