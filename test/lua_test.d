@@ -5,6 +5,7 @@ import std.algorithm;
 import std.regex;
 import std.path;
 import std.getopt;
+import std.uni;
 
 enum WorkDirectory = "lua";
 
@@ -19,6 +20,10 @@ void main(string[] args)
     auto helpInformation = args.getopt(
         "verbose|v", "Always print test stage output", &verbose
     );
+
+    string filter;
+    if (args.length > 1)
+        filter = args[$-1];
 
     struct Test
     {
@@ -67,7 +72,7 @@ void main(string[] args)
         return true;
     }
 
-    foreach (test; tests)
+    foreach (test; tests.filter!(a => a.name.toLower.canFind(filter)))
     {
         writeln("===> ", "\033[4m", test.name, "\033[0m", " <===");
         if (!runStep("Compilation", "../src/dmd", ["-lua", test.location]))
