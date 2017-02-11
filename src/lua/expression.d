@@ -100,6 +100,7 @@ mixin BinaryNode!("NotEqual", "~=");
 mixin BinaryNode!("Concat", "..");
 mixin BinaryNode!("Assign", "=");
 mixin BinaryNode!("Add", "+");
+mixin BinaryNode!("And", "and");
 
 class VariableExpr : Expression
 {

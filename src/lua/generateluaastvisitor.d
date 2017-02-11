@@ -569,6 +569,7 @@ public:
     mixin BinOpOverload2!(d.IdentityExp,
             d.TOKidentity, lua.Equal, d.TOKnotidentity, lua.NotEqual);
     mixin BinOp!(d.CatExp, lua.Concat);
+    mixin BinOp!(d.AndAndExp, lua.And);
 
     override void visit(d.VarExp expr)
     {
