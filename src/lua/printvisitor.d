@@ -41,19 +41,21 @@ private:
     string getFullyScopedName(lua.NamedDeclaration decl)
     {
         auto prefix = "";
-        auto nd = cast(lua.NamedDeclaration)decl.parent;
-        while (nd)
+        auto parent = decl.parent;
+        while (parent)
         {
-            if (this.inScope(nd))
+            if (this.inScope(parent))
                 break;
 
             // HACK: Ignore other modules due to difficulties with `public import`
             // Needs to be fixed at some point!
-            if (cast(lua.Module)nd)
+            if (cast(lua.Module)parent)
                 break;
 
-            prefix = nd.name ~ "." ~ prefix;
-            nd = cast(lua.NamedDeclaration)nd.parent;
+            if (auto nd = cast(lua.NamedDeclaration)parent)
+                prefix = nd.name ~ "." ~ prefix;
+
+            parent = parent.parent;
         }
         return prefix ~ decl.name;
     }
