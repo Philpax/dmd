@@ -12,6 +12,23 @@ function Vector3(x, y, z)
         setmetatable(t, mt)
         return t
     end
+    mt.__sub = function(x, y)
+        local t = {x = x.x - y.x, y = x.y - y.y, z = x.z - y.z}
+        setmetatable(t, mt)
+        return t
+    end
+    mt.__eq = function(a, b)
+        return (a.x == b.x) and (a.y == b.y) and (a.z == b.z)
+    end
+    mt.__tostring = function(v)
+        return ("%f, %f, %f"):format(v.x, v.y, v.z)
+    end
+    mt.__index = {
+        Distance = function(a, b)
+            local d = a - b
+            return math.sqrt(d.x*d.x + d.y*d.y + d.z*d.z)
+        end
+    }
 
     local t = {x = x, y = y, z = z}
     setmetatable(t, mt)
