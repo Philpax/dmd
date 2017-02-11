@@ -106,7 +106,7 @@ function Player(id, name)
 end
 
 Server = {
-    players = {Player(1, "Player1"), Player(2, "Player2")},
+    players = {Player(1, "Player1"), Player(2, "Player2"), Player(3, "Player3")},
     GetPlayers = function(self)
         local index = 1
         return function()

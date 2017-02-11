@@ -1,4 +1,6 @@
 require("runtime-jcmpTestBase")
-local player2 = Server.players[2]
-assert(Events.Handlers.PlayerDeath { player = player2 } == true)
-assert(Events.Handlers.PlayerSpawn { player = player2 } == false)
+local players = Server.players
+assert(Events.Handlers.PlayerDeath { player = players[2] } == true)
+assert(Events.Handlers.PlayerSpawn { player = players[2] } == false)
+assert(Events.Handlers.PlayerDeath { player = players[3] } == true)
+assert(Events.Handlers.PlayerSpawn { player = players[3] } == false)
