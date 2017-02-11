@@ -52,31 +52,61 @@ function Weapon(id)
     return {id = id}
 end
 
-player = {
-    position = Vector3(0, 0, 0),
-    angle = {},
-    SetPosition = function(self, pos)
-        self.position = pos
-    end,
-    GetPosition = function(self)
-        return self.position
-    end,
-    SetAngle = function(self, angle)
-        self.angle = angle
-    end,
-    GetAngle = function(self)
-        return self.angle
-    end,
-    EnterVehicle = function(self, vehicle, seat)
-        print("Entered vehicle")
-    end,
-    ClearInventory = function(self) end,
-    GiveWeapon = function(self, slot, weapon) end,
-    SetHealth = function(self, health) end
-}
+function Player(id, name)
+    local t = {
+        id = id,
+        name = name,
+        position = Vector3(0, 0, 0),
+        angle = {}
+    }
+
+    local mt = {}
+    mt.__eq = function(a, b)
+        return a.id == b.id
+    end
+    mt.__index = {
+        SetPosition = function(self, pos)
+            self.position = pos
+        end,
+        GetPosition = function(self)
+            return self.position
+        end,
+
+        SetAngle = function(self, angle)
+            self.angle = angle
+        end,
+        GetAngle = function(self)
+            return self.angle
+        end,
+
+        GetName = function(self)
+            return self.name
+        end,
+
+        EnterVehicle = function(self, vehicle, seat)
+            print(self:GetName() .. " entered vehicle " .. vehicle:GetId())
+        end,
+
+        ClearInventory = function(self)
+            print(self:GetName() .. " cleared inventory")
+        end,
+        GiveWeapon = function(self, slot, weapon)
+            print(self:GetName() .. " received weapon")
+        end,
+
+        SetHealth = function(self, health)
+        end,
+
+        SendChatMessage = function(self, msg, colour)
+            print("[CHAT for " .. self:GetName() .. "]: " .. msg)
+        end,
+    }
+    setmetatable(t, mt)
+    return t
+end
 
 Server = {
-    players = {player},
+    players = {Player(1, "Player1"), Player(2, "Player2")},
     GetPlayers = function(self)
         local index = 1
         return function()
@@ -85,7 +115,9 @@ Server = {
             return ret
         end
     end,
-    GetPlayerCount = function(self) return #self.players end
+    GetPlayerCount = function(self)
+        return #self.players
+    end
 }
 
 Chat = {

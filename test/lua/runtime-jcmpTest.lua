@@ -1,4 +1,5 @@
 require("runtime-jcmpTestBase")
+local player = Server:GetPlayers()()
 assert(Events.Handlers.ClientModuleLoad {player = player} == true)
 assert(Events.Handlers.PlayerChat {player = player, text = "/up"} == false)
 assert(player.position.y == 100)
