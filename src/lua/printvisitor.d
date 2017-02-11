@@ -208,12 +208,15 @@ public:
         import std.algorithm : map;
         import std.string : join;
 
-        auto args = f.arguments.map!(a => a.name).join(", ");
+        // If there's no body (i.e. this was a declaration),
+        // don't emit this function
+        if (f._body is null)
+            return;
 
         auto len = this.pushScope(f);
+        auto args = f.arguments.map!(a => a.name).join(", ");
         this.writeLine("function %s(%s)", f.name, args);
-        if (f._body)
-            f._body.accept(this);
+        f._body.accept(this);
         this.writeLine("end");
         this.resetScope(len);
     }
