@@ -96,7 +96,18 @@ Chat = {
 
 Vehicle = {
     Create = function(id, pos, angle)
-        print("Created vehicle")
+        local t = {id = id, pos = pos, angle = angle}
+        local mt = {}
+        mt.__index = {
+            GetId = function(self)
+                return self.id
+            end,
+            Remove = function(self)
+                print("Vehicle " .. tostring(self:GetId()) .. " removed")
+            end
+        }
+        setmetatable(t, mt)
+        return t
     end
 }
 
