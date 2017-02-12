@@ -724,4 +724,9 @@ public:
         }
         this.node = new lua.ArrayLiteral(elements);
     }
+
+    override void visit(d.ThisExp expr)
+    {
+        this.node = new lua.Self();
+    }
 }

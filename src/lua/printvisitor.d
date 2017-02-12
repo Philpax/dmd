@@ -407,4 +407,9 @@ public:
         }
         this.write("}");
     }
+
+    override void visit(lua.Self s)
+    {
+        this.write("self");
+    }
 }

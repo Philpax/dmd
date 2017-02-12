@@ -238,3 +238,8 @@ class ArrayLiteral : Expression
 
     mixin Acceptor;
 }
+
+class Self : Expression
+{
+    mixin Acceptor;
+}
