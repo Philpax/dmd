@@ -93,20 +93,17 @@ public:
         this.storeNode(mod, luaModule);
 
         this.mod = luaModule;
-        lua.Declaration[] members = [];
         if (mod.members)
         {
             foreach (member; (*mod.members)[])
             {
                 auto luaNode = this.convert!(lua.Declaration)(member);
                 if (luaNode)
-                    members ~= luaNode;
+                    luaModule.members ~= luaNode;
             }
         }
         this.mod = oldModule;
-
         this.node = luaModule;
-        luaModule.members = members;
     }
 
     override void visit(d.AttribDeclaration attrib)
