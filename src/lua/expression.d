@@ -246,7 +246,7 @@ class Self : Expression
 
 import std.typecons : Tuple;
 alias KeyValue = Tuple!(Expression, Expression);
-KeyValue keyValue(T1, T2)(T1 e1, T2 e2)
+KeyValue keyValue(Expression e1, Expression e2)
 {
     return KeyValue(e1, e2);
 }
