@@ -1,3 +1,4 @@
+require("runtimeBase")
 Events = {
     Handlers = {},
     Subscribe = function(self, name, fn)

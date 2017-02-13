@@ -1,3 +1,4 @@
+require("runtimeBase")
 require(arg[1])
 
 table.remove(arg, 1)

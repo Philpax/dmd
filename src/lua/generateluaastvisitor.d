@@ -24,6 +24,8 @@ private:
 
     // Temporary fix
     lua.Function mathFloor;
+    lua.Function rtDeepCopy;
+    lua.Variable init;
 
     void storeNode(Input)(Input dNode, lua.Node luaNode)
         if (__traits(compiles, dNode.accept(this)))
@@ -43,6 +45,12 @@ private:
 
 public:
     alias visit = d.Visitor.visit;
+
+    this()
+    {
+        this.rtDeepCopy = new lua.Function(null, "__rtDeepCopy", [], null);
+        this.init = new lua.Variable(null, "init", null);
+    }
 
     Result convert(Result, Input)(Input dNode)
         if (__traits(compiles, dNode.accept(this)))
@@ -456,6 +464,11 @@ public:
                 {
                     auto assignExpr = cast(d.AssignExp)exprInit.exp;
                     init = this.convert!(lua.Expression)(assignExpr.e2);
+                    if (exprInit.exp.op == d.TOKblit)
+                    {
+                        init = new lua.DotVariable(init, this.init);
+                        init = new lua.Call(this.rtDeepCopy, null, [init]);
+                    }
                 } 
                 else
                 {
