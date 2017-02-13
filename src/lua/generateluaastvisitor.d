@@ -224,6 +224,11 @@ public:
         luaClass.members = members;
     }
 
+    override void visit(d.SymbolDeclaration symbol)
+    {
+        this.node = this.convert!(lua.Struct)(symbol.dsym);
+    }
+
     // Statements
     override void visit(d.Statement stmt)
     {
