@@ -416,6 +416,9 @@ public:
             name = func.mangleExact.fromStringz.idup;
 
         lua.Variable[] args = [];
+        if (func.vthis)
+            args ~= new lua.Variable(null, "self", null);
+
         if (func.parameters)
         {
             foreach (parameter; (*func.parameters)[])
