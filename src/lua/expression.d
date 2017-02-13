@@ -243,3 +243,20 @@ class Self : Expression
 {
     mixin Acceptor;
 }
+
+import std.typecons : Tuple;
+alias KeyValue = Tuple!(Expression, Expression);
+KeyValue keyValue(T1, T2)(T1 e1, T2 e2)
+{
+    return KeyValue(e1, e2);
+}
+class TableLiteral : Expression
+{
+    KeyValue[] pairs;
+    this(KeyValue[] pairs)
+    {
+        this.pairs = pairs;
+    }
+
+    mixin Acceptor;
+}

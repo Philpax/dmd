@@ -412,4 +412,29 @@ public:
     {
         this.write("self");
     }
+
+    override void visit(lua.TableLiteral t)
+    {
+        if (t.pairs.length > 0)
+        {
+            this.write("{\n");
+            indent({
+                foreach (pair; t.pairs)
+                {
+                    this.writeIndent();
+                    this.write("[");
+                    pair[0].accept(this);
+                    this.write("] = ");
+                    pair[1].accept(this);
+                    this.write(",\n");
+                }
+            });
+            this.writeIndent();
+            this.write("}");
+        }
+        else
+        {
+            this.write("{}");
+        }
+    }
 }
