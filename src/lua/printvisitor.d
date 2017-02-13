@@ -410,6 +410,24 @@ public:
 
     override void visit(lua.TableLiteral t)
     {
+        bool isValidIdentifier(string ident)
+        {
+            import std.uni : isNumber, isAlphaNum;
+            import std.algorithm : startsWith, all, canFind;
+            auto prohibited = [
+                "and", "break", "do", "else", "elseif",
+                "end", "false", "for", "function", "if",
+                "in", "local", "nil", "not", "or",
+                "repeat", "return", "then", "true", "until",
+                "while"
+            ];
+
+            auto validStart = !ident.startsWith!isNumber();
+            auto validChars = ident.all!(a => a.isAlphaNum() || a == '_');
+            auto validIdent = !prohibited.canFind(ident);
+            return validStart && validChars && validIdent;
+        }
+
         if (t.pairs.length > 0)
         {
             this.write("{\n");
@@ -417,9 +435,18 @@ public:
                 foreach (pair; t.pairs)
                 {
                     this.writeIndent();
-                    this.write("[");
-                    pair[0].accept(this);
-                    this.write("] = ");
+                    auto strLiteral = cast(lua.String)pair[0];
+                    if (strLiteral && isValidIdentifier(strLiteral.text))
+                    {
+                        this.write(strLiteral.text);
+                    }
+                    else
+                    {
+                        this.write("[");
+                        pair[0].accept(this);
+                        this.write("]");
+                    }
+                    this.write(" = ");
                     pair[1].accept(this);
                     this.write(",\n");
                 }
