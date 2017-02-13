@@ -29,8 +29,16 @@ private:
         if (__traits(compiles, dNode.accept(this)))
     {
         Value* value = dmd_aaGet(&this.converted, cast(void*)dNode);
-        if (*value is null)
-            *value = cast(void*)luaNode;
+        *value = cast(void*)luaNode;
+    }
+
+    Result getNode(Result, Input)(Input dNode)
+    {
+        Value* value = dmd_aaGet(&this.converted, cast(void*)dNode);
+        if (*value)
+            return cast(Result)(*value);
+        else
+            return null;
     }
 
 public:
@@ -46,12 +54,12 @@ public:
         }
         else
         {
-            Value* value = dmd_aaGet(&this.converted, cast(void*)dNode);
-            if (*value)
-                return cast(Result)(*value);
+            auto prevNode = this.getNode!Result(dNode);
+            if (prevNode)
+                return prevNode;
 
             dNode.accept(this);
-            *value = cast(void*)this.node;
+            this.storeNode(dNode, this.node);
             return cast(Result)this.node;
         }
     }
