@@ -573,7 +573,8 @@ public:
 
     override void visit(d.VarExp expr)
     {
-        this.node = new lua.VariableExpr(this.convert!(lua.Variable)(expr.var));
+        this.node = new lua.NamedDeclarationRef(
+            this.convert!(lua.NamedDeclaration)(expr.var));
     }
 
     override void visit(d.CallExp expr)
@@ -648,9 +649,14 @@ public:
     override void visit(d.SymbolExp expr)
     {
         if (auto func = expr.var.isFuncDeclaration())
-            this.node = new lua.FunctionReference(this.convert!(lua.Function)(func));
+        {
+            this.node = new lua.NamedDeclarationRef(
+                this.convert!(lua.Function)(func));
+        }
         else
+        {
             this.visit(cast(d.Expression)expr);
+        }
     }
 
     override void visit(d.StructLiteralExp expr)

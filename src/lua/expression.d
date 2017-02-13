@@ -102,13 +102,13 @@ mixin BinaryNode!("Assign", "=");
 mixin BinaryNode!("Add", "+");
 mixin BinaryNode!("And", "and");
 
-class VariableExpr : Expression
+class NamedDeclarationRef : Expression
 {
-    Variable variable;
+    NamedDeclaration declaration;
 
-    this(Variable variable)
+    this(NamedDeclaration declaration)
     {
-        this.variable = variable;
+        this.declaration = declaration;
     }
 
     mixin Acceptor;
@@ -164,18 +164,6 @@ class ColonFunction : Expression
     this(Expression operand, Function func)
     {
         this.operand = operand;
-        this.func = func;
-    }
-
-    mixin Acceptor;
-}
-
-class FunctionReference : Expression
-{
-    Function func;
-
-    this(Function func)
-    {
         this.func = func;
     }
 

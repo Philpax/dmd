@@ -304,9 +304,9 @@ public:
         b.operand2.accept(this);
     }
 
-    override void visit(lua.VariableExpr v)
+    override void visit(lua.NamedDeclarationRef d)
     {
-        this.write("%s", this.getFullyScopedName(v.variable));
+        this.write("%s", this.getFullyScopedName(d.declaration));
     }
 
     override void visit(lua.Call c)
@@ -351,11 +351,6 @@ public:
         c.operand.accept(this);
         this.write(":");
         this.write("%s", c.func.name);
-    }
-
-    override void visit(lua.FunctionReference f)
-    {
-        this.write("%s", f.func.name);
     }
 
     override void visit(lua.StructLiteral s)
