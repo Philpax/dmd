@@ -614,15 +614,35 @@ public:
     override void visit(d.CallExp expr)
     {
         lua.Expression[] arguments;
+        bool convertAccessExpr = true;
+
+        // HACK: We attept to rewrite a.f(x) to f(a, x) if f is the result
+        // of a template instance, and a is a struct. Not super great...
+        if (expr.f && expr.f.parent)
+        {
+            if (auto ti = expr.f.parent.isTemplateInstance())
+            {
+                if (auto _struct = ti.parent.isStructDeclaration())
+                {
+                    if (auto dotVar = cast(d.DotVarExp)expr.e1)
+                    {
+                        arguments ~= this.convert!(lua.Expression)(dotVar.e1);
+                        convertAccessExpr = false;
+                    }
+                }
+            }
+        }
+
         if (expr.arguments)
         {
             foreach (argument; (*expr.arguments)[])
                 arguments ~= this.convert!(lua.Expression)(argument);
         }
 
+
         this.node = new lua.Call(
             this.convert!(lua.Function)(expr.f),
-            this.convert!(lua.Expression)(expr.e1),
+            convertAccessExpr ? this.convert!(lua.Expression)(expr.e1) : null,
             arguments
         );
     }
