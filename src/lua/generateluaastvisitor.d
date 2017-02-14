@@ -168,7 +168,12 @@ public:
 
     override void visit(d.TemplateInstance ti)
     {
-        auto luaGroup = new lua.GroupDecl(this.convert!(lua.Declaration)(ti.parent), []);
+        auto parent = this.convert!(lua.Declaration)(ti.parent);
+        // HACK: Delete parent if it's a struct (as the contents of this
+        // instantiation will not be in struct scope)
+        if (cast(lua.Struct)parent)
+            parent = null;
+        auto luaGroup = new lua.GroupDecl(parent, []);
         this.storeNode(ti, luaGroup);
 
         lua.Declaration[] members = [];
