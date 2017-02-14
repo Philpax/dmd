@@ -25,7 +25,11 @@ private:
     // Temporary fix
     lua.Function mathFloor;
     lua.Function rtDeepCopy;
+    lua.Function setmetatable;
+
     lua.Variable init;
+    lua.Variable mt;
+    lua.Variable construct;
 
     void storeNode(Input)(Input dNode, lua.Node luaNode)
         if (__traits(compiles, dNode.accept(this)))
@@ -49,7 +53,11 @@ public:
     this()
     {
         this.rtDeepCopy = new lua.Function(null, "__rtDeepCopy", [], null);
+        this.setmetatable = new lua.Function(null, "setmetatable", [], null);
+
         this.init = new lua.Variable(null, "init", null);
+        this.mt = new lua.Variable(null, "__mt", null);
+        this.construct = new lua.Variable(null, "construct", null);
     }
 
     Result convert(Result, Input)(Input dNode)
@@ -214,6 +222,131 @@ public:
 
         this.node = luaStruct;
         luaStruct.members = members;
+
+        // If this is a Lua-linkage struct, don't emit the table
+        // (as those have their own semantics)
+        if (_struct.lua)
+            return;
+
+        auto structRef = new lua.NamedDeclarationRef(luaStruct);
+
+        // Generate the table representation of the struct
+        alias KV = lua.KeyValue;
+        alias kV = lua.keyValue;
+        auto s = (string value) => new lua.String(value);
+        auto tL = (KV[] pairs) => new lua.TableLiteral(pairs);
+        // Values within .init (i.e. struct default state)
+        KV[] initValues;
+
+        class ReparentVisitor : lua.RecursiveVisitor
+        {
+        public:
+            lua.Declaration from;
+            lua.Declaration to;
+
+            this(lua.Declaration from, lua.Declaration to)
+            {
+                this.from = from;
+                this.to = to;
+            }
+
+            alias visit = lua.RecursiveVisitor.visit;
+            override void visit(lua.Node) {}
+            override void visit(lua.Declaration d)
+            {
+                if (d.parent == from)
+                    d.parent = to;
+            }
+        }
+
+        // Build up the init/metatables
+        // Values contained within __index (i.e. functions)
+        KV[] indexValues; 
+        lua.Variable[] constructorArgs;
+        foreach (member; luaStruct.members)
+        {
+            if (auto variable = cast(lua.Variable)member)
+            {
+                initValues ~= kV(s(variable.name), variable.initializer);
+                constructorArgs ~= variable;
+            }
+            else if (auto func = cast(lua.Function)member)
+            {
+                auto funcLiteral = new lua.FunctionLiteral(
+                    func.parent, func.arguments, func._body);
+
+                scope reparentVisitor = new ReparentVisitor(func, funcLiteral);
+                foreach (argument; funcLiteral.arguments)
+                    argument.accept(reparentVisitor);
+
+                if (funcLiteral._body)
+                    funcLiteral._body.accept(reparentVisitor);
+
+                indexValues ~= kV(
+                    s(func.name), new lua.DeclarationExpr(funcLiteral));
+            }
+        }
+
+        // Create the constructor function (__call)
+        auto constructorBody = new lua.Compound([]);
+        auto constructor = new lua.FunctionLiteral(
+            luaStruct, constructorArgs, constructorBody);
+
+        auto constructorSelf = new lua.Variable(constructor, "self",
+            new lua.Call(this.rtDeepCopy, null, 
+                [new lua.DotVariable(structRef, this.init)]
+            )
+        );
+        auto constructorSelfRef = new lua.NamedDeclarationRef(constructorSelf);
+        constructorBody.members ~= new lua.ExpressionStmt(
+            new lua.DeclarationExpr(constructorSelf)
+        );
+        foreach (variable; constructorArgs)
+        {
+            constructorBody.members ~= new lua.ExpressionStmt(
+                new lua.Assign(
+                    new lua.DotVariable(constructorSelfRef, variable),
+                    new lua.NamedDeclarationRef(variable)
+                )
+            );
+        }
+        constructorBody.members ~= new lua.Return(constructorSelfRef);
+
+        // Metatable values
+        KV[] mtValues = [kV(s("__index"), tL(indexValues))];
+
+        // Build up the final table
+        auto structTable = tL([
+            kV(s("init"), tL(initValues)),
+            kV(s("construct"), new lua.DeclarationExpr(constructor)),
+            kV(s("__mt"), tL(mtValues))
+        ]);
+
+        // Build entries for the top scope
+        lua.Declaration[] topScope;
+        // Table variable
+        topScope ~= new lua.Variable(
+            this.mod, luaStruct.name, structTable);
+        // Set metatable for .init
+        topScope ~= new lua.StatementDecl(this.mod,
+            new lua.ExpressionStmt(
+                new lua.Call(this.setmetatable, null, [
+                    new lua.DotVariable(structRef, this.init),
+                    new lua.DotVariable(structRef, this.mt)
+                ])
+            )
+        );
+        // Set metatable for the table
+        auto tableMt = tL([
+            kV(s("__call"), new lua.DotVariable(structRef, this.construct))
+        ]);
+        topScope ~= new lua.StatementDecl(this.mod,
+            new lua.ExpressionStmt(
+                new lua.Call(this.setmetatable, null, [structRef, tableMt])
+            )
+        );
+
+        this.mod.members ~= new lua.GroupDecl(luaStruct.parent, topScope);
     }
 
     override void visit(d.ClassDeclaration _class)
