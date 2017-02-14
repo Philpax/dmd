@@ -193,6 +193,8 @@ public:
 
     override void visit(d.StructDeclaration _struct)
     {
+        // Generate the struct declaration in the Lua AST
+        // (which is not actually represented in the final code)
         auto luaStruct = new lua.Struct(
             this.convert!(lua.Declaration)(_struct.parent),
             _struct.ident.toDString(), []);
@@ -469,7 +471,8 @@ public:
                 {
                     auto assignExpr = cast(d.AssignExp)exprInit.exp;
                     init = this.convert!(lua.Expression)(assignExpr.e2);
-                    if (exprInit.exp.op == d.TOKblit)
+                    if (assignExpr.op == d.TOKblit &&
+                        assignExpr.e2.type.ty == d.Tstruct)
                     {
                         init = new lua.DotVariable(init, this.init);
                         init = new lua.Call(this.rtDeepCopy, null, [init]);
