@@ -233,6 +233,8 @@ extern (C++) class StructDeclaration : AggregateDeclaration
     Type arg1type;
     Type arg2type;
 
+    bool lua = false;
+
     // Even if struct is defined as non-root symbol, some built-in operations
     // (e.g. TypeidExp, NewExp, ArrayLiteralExp, etc) request its TypeInfo.
     // For those, today TypeInfo_Struct is generated in COMDAT.
@@ -307,6 +309,9 @@ extern (C++) class StructDeclaration : AggregateDeclaration
                 isdeprecated = true;
             if (storage_class & STCabstract)
                 error("structs, unions cannot be abstract");
+
+            if (sc.linkage == LINKlua)
+                lua = true;
 
             userAttribDecl = sc.userAttribDecl;
         }
