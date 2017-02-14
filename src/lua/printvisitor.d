@@ -277,6 +277,11 @@ public:
         this.pushScope(i.mod);
     }
 
+    override void visit(lua.StatementDecl s)
+    {
+        s.stmt.accept(this);
+    }
+
     // Expressions
     override void visit(lua.UnimplementedExpr u)
     {

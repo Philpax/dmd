@@ -170,3 +170,16 @@ class Import : Declaration
 
     mixin Acceptor;
 }
+
+class StatementDecl : Declaration
+{
+    Statement stmt;
+
+    this(Declaration parent, Statement stmt)
+    {
+        super(parent);
+        this.stmt = stmt;
+    }
+
+    mixin Acceptor;
+}
