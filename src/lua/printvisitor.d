@@ -10,6 +10,7 @@ private:
     OutBuffer* buf;
     uint indentLevel = 0;
     lua.Declaration[] scopes;
+    lua.Module mod;
 
     void writeIndent()
     {
@@ -241,6 +242,7 @@ public:
     {
         this.writeLine("-- %s", m.name);
 
+        this.mod = m;
         auto len = this.pushScope(m);
         foreach (member; m.members)
         {
@@ -254,7 +256,9 @@ public:
     
     override void visit(lua.Variable v)
     {
-        this.write("local %s", v.name);
+        if (v.parent != this.mod)
+            this.write("local ");
+        this.write("%s", v.name);
         if (v.initializer)
         {
             this.write(" = ");
