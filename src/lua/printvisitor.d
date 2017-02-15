@@ -282,6 +282,8 @@ public:
         s.stmt.accept(this);
     }
 
+    override void visit(lua.Struct s) {}
+
     // Expressions
     override void visit(lua.UnimplementedExpr u)
     {
