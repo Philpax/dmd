@@ -276,3 +276,16 @@ mixin template UnaryNode(string Name, string Operator)
 }
 
 mixin UnaryNode!("Not", "not ");
+
+class Assert : Unary
+{
+    Expression message;
+
+    this(Expression operand, Expression message)
+    {
+        super(operand, "assert");
+        this.message = message;
+    }
+
+    mixin Acceptor;
+}

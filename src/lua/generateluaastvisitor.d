@@ -940,4 +940,12 @@ public:
         }
     }
     mixin UnaOp!(d.NotExp, lua.Not);
+
+    override void visit(d.AssertExp expr)
+    {
+        this.node = new lua.Assert(
+            this.convert!(lua.Expression)(expr.e1),
+            this.convert!(lua.Expression)(expr.msg)
+        );
+    }
 }

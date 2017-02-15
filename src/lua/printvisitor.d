@@ -476,4 +476,16 @@ public:
         this.write(u.operator);
         u.operand.accept(this);
     }
+
+    override void visit(lua.Assert a)
+    {
+        this.write("assert(");
+        a.operand.accept(this);
+        if (a.message)
+        {
+            this.write(", ");
+            a.message.accept(this);
+        }
+        this.write(")");
+    }
 }
