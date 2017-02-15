@@ -603,14 +603,14 @@ public:
                 args ~= new lua.Variable(null, parameter.ident.toDString(), null);
         }
 
-        auto luaFunction = new lua.Function(null, name, args, null);
+        auto luaFunction = new lua.Function(
+            this.convert!(lua.Declaration)(func.parent), name, args, null);
         this.storeNode(func, luaFunction);
 
         // HACK: Grab the definition of math.floor for later use
         if (func.parent && func.parent.ident && func.parent.ident.toDString() == "math" && name == "floor")
             this.mathFloor = luaFunction;
 
-        luaFunction.parent = this.convert!(lua.Declaration)(func.parent);
         luaFunction._body = this.convert!(lua.Statement)(func.fbody);
         luaFunction.isStatic = func.isStatic();
         this.node = luaFunction;
@@ -652,9 +652,10 @@ public:
             if (decl.type.ty == d.Tarray || decl.type.ty == d.Tsarray)
                 init = new lua.ArrayLiteral([]);
         } 
-        this.node = new lua.Variable(
+        auto node = new lua.Variable(
             this.convert!(lua.Declaration)(decl.parent),
             decl.ident.toDString(), init);
+        this.node = node;
     }
 
     override void visit(d.TemplateDeclaration decl)
@@ -801,7 +802,6 @@ public:
             foreach (argument; (*expr.arguments)[])
                 arguments ~= this.convert!(lua.Expression)(argument);
         }
-
 
         this.node = new lua.Call(
             this.convert!(lua.Function)(expr.f),
