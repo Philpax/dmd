@@ -951,4 +951,15 @@ public:
             this.convert!(lua.Expression)(expr.msg)
         );
     }
+
+    override void visit(d.AddrExp expr)
+    {
+        // If this resolves to a struct, pass it through (as we're
+        // emulating a struct with a reference type anyway)
+        if (expr.e1.type.ty == d.Tstruct)
+            this.node = this.convert!(lua.Expression)(expr.e1);
+        // We don't know how to deal with this case right now
+        else
+            this.visit(cast(d.Expression)expr);
+    }
 }
