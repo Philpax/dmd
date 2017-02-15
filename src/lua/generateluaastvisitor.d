@@ -203,11 +203,11 @@ public:
     {
         // Generate the struct declaration in the Lua AST
         // (which is not actually represented in the final code)
-        auto luaStruct = new lua.Struct(
-            this.convert!(lua.Declaration)(_struct.parent),
-            _struct.ident.toDString(), []);
-
+        auto luaStruct = new lua.Struct(null, _struct.ident.toDString(), []);
         this.storeNode(_struct, luaStruct);
+
+        auto parent = this.convert!(lua.Declaration)(_struct.parent);
+        luaStruct.parent = parent;
 
         lua.Declaration[] members = [];
         if (_struct.members)
