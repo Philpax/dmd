@@ -267,7 +267,10 @@ public:
         {
             if (auto variable = cast(lua.Variable)member)
             {
-                initValues ~= kV(s(variable.name), variable.initializer);
+                auto varInit = variable.initializer;
+                if (varInit is null)
+                    varInit = new lua.Nil();
+                initValues ~= kV(s(variable.name), varInit);
                 constructorArgs ~= variable;
             }
             else if (auto func = cast(lua.Function)member)
