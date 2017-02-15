@@ -31,6 +31,10 @@ final:
     Iterator!Player GetPlayers();
 }
 extern ServerClass Server;
+@property IteratorRange!Player Players()(ServerClass server)
+{
+    return IteratorRange!Player(server.GetPlayers());
+}
 
 final class ChatClass
 {

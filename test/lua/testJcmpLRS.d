@@ -22,13 +22,8 @@ void StartGame()
     const message = "Starting game with " ~ tostring(Server.GetPlayerCount()) ~ " players";
     Chat.Broadcast("[Last Rico Standing] " ~ message, textColor);
 
-    auto playerIt = Server.GetPlayers();
-    while (true)
+    foreach (player; Server.Players)
     {
-        auto player = playerIt();
-        if (player is null)
-            break;
-
         table.insert(players, player);
 
         const randomIndex = math.random(0, spawns.length-1);
