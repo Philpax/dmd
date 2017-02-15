@@ -87,6 +87,16 @@ private:
         return this.scopes.canFind(decl);
     }
 
+    final void acceptWithParens(lua.Expression e)
+    {
+        auto needsParens = !!cast(lua.Binary)e;
+        if (needsParens)
+            this.write("(");
+        e.accept(this);
+        if (needsParens)
+            this.write(")");
+    }
+
 public:
     alias visit = lua.Visitor.visit;
     bool written = false;
@@ -310,9 +320,9 @@ public:
 
     override void visit(lua.Binary b)
     {
-        b.operand1.accept(this);
+        this.acceptWithParens(b.operand1);
         this.write(" %s ", b.operation);
-        b.operand2.accept(this);
+        this.acceptWithParens(b.operand2);
     }
 
     override void visit(lua.NamedDeclarationRef d)
@@ -474,7 +484,7 @@ public:
     override void visit(lua.Unary u)
     {
         this.write(u.operator);
-        u.operand.accept(this);
+        this.acceptWithParens(u.operand);
     }
 
     override void visit(lua.Assert a)
