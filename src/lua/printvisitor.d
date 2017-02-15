@@ -470,4 +470,10 @@ public:
             this.write("{}");
         }
     }
+
+    override void visit(lua.Unary u)
+    {
+        this.write(u.operator);
+        u.operand.accept(this);
+    }
 }

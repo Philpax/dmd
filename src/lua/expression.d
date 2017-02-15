@@ -248,3 +248,29 @@ class TableLiteral : Expression
 
     mixin Acceptor;
 }
+
+class Unary : Expression
+{
+    Expression operand;
+    string operator;
+
+    this(Expression operand, string operator)
+    {
+        this.operand = operand;
+        this.operator = operator;
+    }
+
+    mixin Acceptor;
+}
+mixin template UnaryNode(string Name, string Operator)
+{
+    mixin(`class ` ~ Name ~ ` : Unary
+    {
+        this(Expression operand)
+        {
+            super(operand, Operator);
+        }
+
+        mixin Acceptor;
+    }`);
+}

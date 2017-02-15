@@ -922,4 +922,21 @@ public:
     {
         this.node = new lua.Self();
     }
+
+    override void visit(d.UnaExp expr)
+    {
+        import std.string : fromStringz;
+        this.node = new lua.Unary(
+            this.convert!(lua.Expression)(expr.e1),
+            d.Token.toChars(expr.op).fromStringz().idup
+        );
+    }
+
+    mixin template UnaOp(DClass, LuaClass)
+    {
+        override void visit(DClass expr)
+        {
+            this.node = new LuaClass(this.convert!(lua.Expression)(expr.e1));
+        }
+    }
 }
