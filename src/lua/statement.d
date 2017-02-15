@@ -117,3 +117,17 @@ class Break : Statement
 {
     mixin Acceptor;
 }
+
+class RepeatUntil : Statement
+{
+    Statement _body;
+    Expression condition;
+
+    this(Statement _body, Expression condition)
+    {
+        this._body = _body;
+        this.condition = condition;
+    }
+
+    mixin Acceptor;
+}

@@ -562,6 +562,14 @@ public:
         this.node = new lua.Break();
     }
 
+    override void visit(d.DoStatement _do)
+    {
+        this.node = new lua.RepeatUntil(
+            this.convertConditionalBody(_do._body),
+            new lua.Not(this.convert!(lua.Expression)(_do.condition))
+        );
+    }
+
     // Declarations
     override void visit(d.Declaration decl)
     {

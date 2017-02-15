@@ -208,6 +208,16 @@ public:
         this.writeLine("break");
     }
 
+    override void visit(lua.RepeatUntil r)
+    {
+        this.writeLine("repeat");
+        r._body.accept(this);
+        this.writeIndent();
+        this.write("until ");
+        r.condition.accept(this);
+        this.writeLine();
+    }
+
     // Declarations
     override void visit(lua.UnimplementedDecl u)
     {
