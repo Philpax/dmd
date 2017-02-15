@@ -939,4 +939,5 @@ public:
             this.node = new LuaClass(this.convert!(lua.Expression)(expr.e1));
         }
     }
+    mixin UnaOp!(d.NotExp, lua.Not);
 }

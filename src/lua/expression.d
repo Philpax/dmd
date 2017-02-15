@@ -274,3 +274,5 @@ mixin template UnaryNode(string Name, string Operator)
         mixin Acceptor;
     }`);
 }
+
+mixin UnaryNode!("Not", "not ");
