@@ -626,7 +626,32 @@ public:
 
     override void visit(d.FuncLiteralDeclaration func)
     {
+        // HACK: Purposely do nothing, so that we don't emit a func literal
+        // at top scope. Thought process is that we'll manually emit one
+        // whereever we need to, anyway...
         this.node = null;
+    }
+
+    lua.FunctionLiteral generateFuncLiteral(d.FuncLiteralDeclaration func)
+    {
+        if (auto luaFunction = this.getNode!(lua.FunctionLiteral)(func))
+            return luaFunction;
+
+        auto luaFunction = new lua.FunctionLiteral(null, [], null);
+
+        if (func.parameters)
+        {
+            foreach (parameter; (*func.parameters)[])
+                luaFunction.arguments ~= new lua.Variable(
+                    luaFunction, parameter.ident.toDString(), null);
+        }
+
+        this.storeNode(func, luaFunction);
+
+        luaFunction.parent = this.convert!(lua.Declaration)(func.parent);
+        luaFunction._body = this.convert!(lua.Statement)(func.fbody);
+        luaFunction.isStatic = func.isStatic();
+        return luaFunction;
     }
 
     override void visit(d.VarDeclaration decl)
@@ -846,10 +871,7 @@ public:
                 args ~= new lua.Variable(null, parameter.ident.toDString(), null);
         }
 
-        auto luaFunction = new lua.FunctionLiteral(
-            null, args, this.convert!(lua.Statement)(func.fbody));
-
-        this.node = new lua.DeclarationExpr(luaFunction);
+        this.node = new lua.DeclarationExpr(this.generateFuncLiteral(func));
     }
 
     override void visit(d.DotVarExp expr)
