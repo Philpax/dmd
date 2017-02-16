@@ -266,6 +266,12 @@ public:
         auto len = this.pushScope(m);
         foreach (member; m.members)
         {
+            // HACK: Ignore top-level func literal declarations, as
+            // the generated AST tends to bring these in...
+            // Need to fix at AST generation level!
+            if (cast(lua.FunctionLiteral)member)
+                continue;
+
             this.written = false;
             member.accept(this);
             if (this.written)
