@@ -805,6 +805,14 @@ public:
 
     override void visit(d.VarExp expr)
     {
+        if (auto funcLiteral = expr.var.isFuncLiteralDeclaration())
+        {
+            this.node = new lua.DeclarationExpr(
+                this.generateFuncLiteral(funcLiteral)
+            );
+            return;
+        }
+
         this.node = new lua.NamedDeclarationRef(
             this.convert!(lua.NamedDeclaration)(expr.var));
     }
