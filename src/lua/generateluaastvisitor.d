@@ -207,7 +207,7 @@ public:
         this.storeNode(_struct, luaStruct);
 
         auto parent = this.convert!(lua.Declaration)(_struct.parent);
-        luaStruct.parent = parent;
+        luaStruct.parent = this.mod;
 
         lua.Declaration[] members = [];
         if (_struct.members)
@@ -349,7 +349,7 @@ public:
             )
         );
 
-        this.mod.members ~= new lua.GroupDecl(luaStruct.parent, topScope);
+        this.mod.members ~= new lua.GroupDecl(this.mod, topScope);
     }
 
     override void visit(d.ClassDeclaration _class)
