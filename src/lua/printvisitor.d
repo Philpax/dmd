@@ -344,7 +344,19 @@ public:
     {
         if (c.call)
         {
+            bool parensRequired = false;
+
+            if (auto declExpr = cast(lua.DeclarationExpr)c.call)
+            {
+                if (cast(lua.FunctionLiteral)declExpr.declaration)
+                    parensRequired = true;
+            }
+
+            if (parensRequired)
+                this.write("(");
             c.call.accept(this);
+            if (parensRequired)
+                this.write(")");
         }
         else
         {
