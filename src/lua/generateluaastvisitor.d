@@ -602,7 +602,8 @@ public:
             name = func.mangleExact.fromStringz.idup;
 
         lua.Variable[] args = [];
-        if (func.vthis)
+        // HACK: Only emit the self variable if we're dealing with a struct
+        if (func.vthis && func.parent.isStructDeclaration())
             args ~= new lua.Variable(null, "self", null);
 
         if (func.parameters)
