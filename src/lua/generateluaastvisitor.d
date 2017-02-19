@@ -657,6 +657,8 @@ public:
 
     override void visit(d.VarDeclaration decl)
     {
+        auto node = new lua.Variable(null, decl.ident.toDString(), null);
+        this.storeNode(decl, node);
         lua.Expression init = null;
         if (decl._init)
         {
@@ -686,9 +688,8 @@ public:
             if (decl.type.ty == d.Tarray || decl.type.ty == d.Tsarray)
                 init = new lua.ArrayLiteral([]);
         } 
-        auto node = new lua.Variable(
-            this.convert!(lua.Declaration)(decl.parent),
-            decl.ident.toDString(), init);
+        node.parent = this.convert!(lua.Declaration)(decl.parent);
+        node.initializer = init;
         this.node = node;
     }
 
