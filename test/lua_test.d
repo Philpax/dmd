@@ -24,9 +24,9 @@ void main(string[] args)
         "exclude|e", "Exclude the given test", &exclude
     );
 
-    string filter;
+    string[] filters;
     if (args.length > 1)
-        filter = args[$-1];
+        filters = args[1..$];
 
     struct Test
     {
@@ -77,9 +77,17 @@ void main(string[] args)
 
     auto selectedTests = tests;
     if (exclude)
-        selectedTests = tests.filter!(a => !a.name.toLower.canFind(filter)).array();
+    {
+        selectedTests = tests.filter!(a => 
+            !filters.any!(b => a.name.toLower.canFind(b))
+        ).array();
+    }
     else
-        selectedTests = tests.filter!(a => a.name.toLower.canFind(filter)).array();
+    {
+        selectedTests = tests.filter!(a => 
+            filters.any!(b => a.name.toLower.canFind(b))
+        ).array();
+    }
 
     foreach (test; selectedTests)
     {
