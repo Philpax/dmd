@@ -330,23 +330,26 @@ public:
         // Table variable
         topScope ~= new lua.Variable(
             this.mod, luaStruct.name, structTable);
+
+        // Generate setmetatable calls for init/table
         // Set metatable for .init
-        topScope ~= new lua.StatementDecl(this.mod,
-            new lua.ExpressionStmt(
-                new lua.Call(this.setmetatable, null, [
-                    new lua.DotVariable(structRef, this.init),
-                    new lua.DotVariable(structRef, this.mt)
-                ])
-            )
+        auto initMtStmt = new lua.ExpressionStmt(
+            new lua.Call(this.setmetatable, null, [
+                new lua.DotVariable(structRef, this.init),
+                new lua.DotVariable(structRef, this.mt)
+            ])
         );
         // Set metatable for the table
         auto tableMt = tL([
             kV(s("__call"), new lua.DotVariable(structRef, this.construct))
         ]);
+        auto tableMtStmt = new lua.ExpressionStmt(
+            new lua.Call(this.setmetatable, null, [structRef, tableMt])
+        );
+
+        // Add the metatable statements as a group to the top scope
         topScope ~= new lua.StatementDecl(this.mod,
-            new lua.ExpressionStmt(
-                new lua.Call(this.setmetatable, null, [structRef, tableMt])
-            )
+            new lua.GroupStmt([initMtStmt, tableMtStmt])
         );
 
         this.mod.members ~= new lua.GroupDecl(this.mod, topScope);
@@ -636,7 +639,10 @@ public:
 
         // HACK: Only emit the self variable if we're dealing with a struct
         if (func.vthis)
+        {
+            printf("generating self for %s\n", func.ident.toChars());
             luaFunction.arguments ~= new lua.Variable(luaFunction, "self", null);
+        }
 
         if (func.parameters)
         {
