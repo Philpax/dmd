@@ -162,7 +162,7 @@ GLUE_SRCS=irstate.d toctype.d glue.d gluelayer.d todt.d tocsym.d toir.d dmsc.d \
 LUA_SRCS=$(LUA)/printgen.d $(LUA)/dast.d $(LUA)/expression.d $(LUA)/statement.d \
 	$(LUA)/declaration.d $(LUA)/ast.d $(LUA)/astgen.d $(LUA)/node.d \
 	$(LUA)/visitor.d $(LUA)/generateluaastvisitor.d $(LUA)/printvisitor.d \
-	$(LUA)/flattenblockvisitor.d $(LUA)/dumpvisitor.d
+	$(LUA)/flattenblockvisitor.d $(LUA)/dumpvisitor.d $(LUA)/constants.d
 
 BACK_HDRS=$C/bcomplex.d $C/cc.d $C/cdef.d $C/cgcv.d $C/code.d $C/cv4.d $C/dt.d $C/el.d $C/global.d \
 	$C/obj.d $C/oper.d $C/outbuf.d $C/rtlsym.d $C/code_x86.d $C/iasm.d \

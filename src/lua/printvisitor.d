@@ -463,17 +463,11 @@ public:
         {
             import std.uni : isNumber, isAlphaNum;
             import std.algorithm : startsWith, all, canFind;
-            auto prohibited = [
-                "and", "break", "do", "else", "elseif",
-                "end", "false", "for", "function", "if",
-                "in", "local", "nil", "not", "or",
-                "repeat", "return", "then", "true", "until",
-                "while"
-            ];
+            import ddmd.lua.constants : Keywords;
 
             auto validStart = !ident.startsWith!isNumber();
             auto validChars = ident.all!(a => a.isAlphaNum() || a == '_');
-            auto validIdent = !prohibited.canFind(ident);
+            auto validIdent = !Keywords.canFind(ident);
             return validStart && validChars && validIdent;
         }
 
