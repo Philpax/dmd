@@ -29,6 +29,28 @@ mixin template Acceptor()
 
 class RecursiveVisitor : Visitor
 {
+private:
+    int indent = 0;
+    Node[] history;
+
+    uint pushHistory(Node node)
+    {
+        auto length = this.history.length;
+        this.history ~= node;
+        return length;
+    }
+
+    void resetHistory(uint length)
+    {
+        this.history = this.history[0..length];
+    }
+
+    bool inHistory(Node node)
+    {
+        import std.algorithm : canFind;
+        return this.history.canFind(node);
+    }
+
 public:
     alias visit = Visitor.visit;
 
@@ -67,7 +89,7 @@ string generateVisitMethods(BaseClass)()
     return output;
 }
 
-enum NoVisit;
+public enum NoVisit;
 string generateRecursiveVisitMethods(BaseClass)()
 {
     import std.typecons : Identity;
@@ -117,7 +139,12 @@ string generateRecursiveVisitMethods(BaseClass)()
 `
     override void visit(%s value)
     {
+        if (this.inHistory(value))
+            return;
+
+        auto length = this.pushHistory(value);
 %s
+        this.resetHistory(length);
     }
 `.format(Member.stringof, statements.map!(a => "        " ~ a).join("\n"));
         }
