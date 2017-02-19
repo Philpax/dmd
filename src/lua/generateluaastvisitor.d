@@ -639,10 +639,7 @@ public:
 
         // HACK: Only emit the self variable if we're dealing with a struct
         if (func.vthis)
-        {
-            printf("generating self for %s\n", func.ident.toChars());
             luaFunction.arguments ~= new lua.Variable(luaFunction, "self", null);
-        }
 
         if (func.parameters)
         {
