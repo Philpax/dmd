@@ -440,7 +440,36 @@ public:
 
     override void visit(d.ExpStatement stmt)
     {
-        this.node = new lua.ExpressionStmt(this.convert!(lua.Expression)(stmt.exp));
+        auto expr = this.convert!(lua.Expression)(stmt.exp);
+        // Rewrite a = (b = (c = d)) into separate statements
+        if (auto assignExpr = cast(lua.Assign)expr)
+        {
+            lua.Assign[] assignExprs;
+            while (assignExpr !is null)
+            {
+                assignExprs ~= assignExpr;
+                auto newAssignExpr = cast(lua.Assign)assignExpr.operand2;
+                if (newAssignExpr !is null)
+                {
+                    assignExpr.operand2 = newAssignExpr.operand1;
+                }
+                assignExpr = newAssignExpr;
+            }
+
+            import std.algorithm : map;
+            import std.array : array;
+            import std.range : retro;
+
+            this.node = new lua.GroupStmt(
+                assignExprs.map!(
+                    a => cast(lua.Statement)(new lua.ExpressionStmt(a))
+                ).retro.array()
+            );
+        }
+        else
+        {
+            this.node = new lua.ExpressionStmt(expr);
+        }
     }
     
     override void visit(d.ForStatement stmt)
