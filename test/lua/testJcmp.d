@@ -49,9 +49,6 @@ bool ClientModuleLoad(jcmp.ClientModuleLoad event)
 
 int main(string[] args)
 {
-    foreach (player; Server.Players.filter!(a => a.GetName() == "Player1"))
-        print(player.GetName());
-
     Events.AutoSubscribe(&ChatCommands);
     Events.AutoSubscribe(&ClientModuleLoad);
     Events.Subscribe("ModuleUnload", (_) {
