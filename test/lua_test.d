@@ -6,6 +6,7 @@ import std.regex;
 import std.path;
 import std.getopt;
 import std.uni;
+import std.array;
 
 enum WorkDirectory = "lua";
 
@@ -17,8 +18,10 @@ auto exec(string program, string[] args)
 void main(string[] args)
 {
     bool verbose = false;
+    bool exclude = false;
     auto helpInformation = args.getopt(
-        "verbose|v", "Always print test stage output", &verbose
+        "verbose|v", "Always print test stage output", &verbose,
+        "exclude|e", "Exclude the given test", &exclude
     );
 
     string filter;
@@ -72,7 +75,13 @@ void main(string[] args)
         return true;
     }
 
-    foreach (test; tests.filter!(a => a.name.toLower.canFind(filter)))
+    auto selectedTests = tests;
+    if (exclude)
+        selectedTests = tests.filter!(a => !a.name.toLower.canFind(filter)).array();
+    else
+        selectedTests = tests.filter!(a => a.name.toLower.canFind(filter)).array();
+
+    foreach (test; selectedTests)
     {
         writeln("===> ", "\033[4m", test.name, "\033[0m", " <===");
         if (!runStep("Compilation", "../src/dmd", ["-lua", test.location]))
