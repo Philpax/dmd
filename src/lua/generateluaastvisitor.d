@@ -630,20 +630,19 @@ public:
         else
             name = func.mangleExact.fromStringz.idup;
 
-        lua.Variable[] args = [];
+        auto luaFunction = new lua.Function(
+            this.convert!(lua.Declaration)(func.parent), name, [], null);
+        this.storeNode(func, luaFunction);
+
         // HACK: Only emit the self variable if we're dealing with a struct
-        if (func.vthis && func.parent.isStructDeclaration())
-            args ~= new lua.Variable(null, "self", null);
+        if (func.vthis)
+            luaFunction.arguments ~= new lua.Variable(luaFunction, "self", null);
 
         if (func.parameters)
         {
             foreach (parameter; (*func.parameters)[])
-                args ~= new lua.Variable(null, parameter.ident.toDString(), null);
+                luaFunction.arguments ~= this.convert!(lua.Variable)(parameter);
         }
-
-        auto luaFunction = new lua.Function(
-            this.convert!(lua.Declaration)(func.parent), name, args, null);
-        this.storeNode(func, luaFunction);
 
         // HACK: Grab the definition of math.floor for later use
         if (func.parent && func.parent.ident && func.parent.ident.toDString() == "math" && name == "floor")
@@ -672,8 +671,7 @@ public:
         if (func.parameters)
         {
             foreach (parameter; (*func.parameters)[])
-                luaFunction.arguments ~= new lua.Variable(
-                    luaFunction, parameter.ident.toDString(), null);
+                luaFunction.arguments ~= this.convert!(lua.Variable)(parameter);
         }
 
         this.storeNode(func, luaFunction);
