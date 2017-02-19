@@ -903,15 +903,7 @@ public:
 
     override void visit(d.FuncExp expr)
     {
-        auto func = expr.fd;
-        lua.Variable[] args = [];
-        if (func.parameters)
-        {
-            foreach (parameter; (*func.parameters)[])
-                args ~= new lua.Variable(null, parameter.ident.toDString(), null);
-        }
-
-        this.node = new lua.DeclarationExpr(this.generateFuncLiteral(func));
+        this.node = new lua.DeclarationExpr(this.generateFuncLiteral(expr.fd));
     }
 
     override void visit(d.DotVarExp expr)
