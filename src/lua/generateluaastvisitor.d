@@ -687,7 +687,15 @@ public:
 
     override void visit(d.VarDeclaration decl)
     {
-        auto node = new lua.Variable(null, decl.ident.toDString(), null);
+        import ddmd.lua.constants : Keywords;
+        import std.algorithm : canFind;
+
+        // Adjust the name if it's a reserved keyword
+        auto name = decl.ident.toDString();
+        if (Keywords.canFind(name))
+            name = "_" ~ name;
+
+        auto node = new lua.Variable(null, name, null);
         this.storeNode(decl, node);
         lua.Expression init = null;
         if (decl._init)
