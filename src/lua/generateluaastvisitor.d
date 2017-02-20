@@ -634,7 +634,7 @@ public:
 
     override void visit(d.FuncDeclaration func)
     {
-        import ddmd.dmangle : mangleExact;
+        import ddmd.dmangle : mangleExact, Mangler;
         import ddmd.globals : LINKlua;
         import std.string : fromStringz;
 
@@ -645,18 +645,34 @@ public:
             return;
         }
 
-        string name;
-        if (func.linkage == LINKlua)
-            name = func.ident.toDString();
-        else
-            name = func.mangleExact.fromStringz.idup;
+        string name = func.ident.toDString();
+        bool isMemberFunction = func.vthis && func.vthis.type.ty == d.Tstruct;
+        if (func.linkage != LINKlua)
+        {
+            if (isMemberFunction)
+            {
+                // If this is a non-unique member function, add some mangling
+                // Otherwise, go ahead and leave it as is for max readability
+                if (!func.isUnique())
+                {
+                    OutBuffer buf;
+                    scope v = new Mangler(&buf);
+                    v.mangleFunc(func, true);
+                    name = name ~ buf.extractString.fromStringz.idup;
+                }
+            }
+            else
+            {
+                name = func.mangleExact.fromStringz.idup;
+            }
+        }
 
         auto luaFunction = new lua.Function(
             this.convert!(lua.Declaration)(func.parent), name, [], null);
         this.storeNode(func, luaFunction);
 
         // HACK: Only emit the self variable if we're dealing with a struct
-        if (func.vthis && func.vthis.type.ty == d.Tstruct)
+        if (isMemberFunction)
             luaFunction.arguments ~= new lua.Variable(luaFunction, "self", null);
 
         if (func.parameters)
