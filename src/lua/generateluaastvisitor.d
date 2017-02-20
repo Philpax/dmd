@@ -749,6 +749,12 @@ public:
         this.node = null;
     }
 
+    override void visit(d.AliasDeclaration decl)
+    {
+        // Do nothing: We don't emit alias decls
+        this.node = null;
+    }
+
     // Expressions
     override void visit(d.Expression expr)
     {
