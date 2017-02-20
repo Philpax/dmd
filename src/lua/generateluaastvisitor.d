@@ -124,18 +124,23 @@ public:
 
     override void visit(d.AttribDeclaration attrib)
     {
-        if (attrib.decl)
+        // Not sure why this works; lifted from toobj.d
+        auto members = attrib.include(null, null);
+
+        if (members)
         {
             auto node = new lua.GroupDecl(
                 this.convert!(lua.Declaration)(attrib.parent), []);
             this.storeNode(attrib, node);
+
             lua.Declaration[] decls;
-            foreach (decl; (*attrib.decl)[])
+            foreach (decl; (*members)[])
             {
-                // Don't try converting declarations belonging to non-compiled
-                // files
-                bool skippableDecl = !decl.isVarDeclaration();
-                if (decl.semanticRun < d.PASSsemantic3done && skippableDecl)
+                // Only accept certain kinds of declarations for now
+                bool skippableDecl =
+                    !(decl.isVarDeclaration() || decl.isFuncDeclaration());
+
+                if (skippableDecl)
                     continue;
 
                 auto luaDecl = this.convert!(lua.Declaration)(decl);
