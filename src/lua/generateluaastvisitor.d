@@ -690,6 +690,13 @@ public:
         import ddmd.lua.constants : Keywords;
         import std.algorithm : canFind;
 
+        // Don't emit manifest constants
+        if (decl.storage_class & d.STCmanifest)
+        {
+            this.node = null;
+            return;
+        }
+
         // Adjust the name if it's a reserved keyword
         auto name = decl.ident.toDString();
         if (Keywords.canFind(name))
