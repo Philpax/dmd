@@ -221,7 +221,15 @@ public:
             {
                 auto luaNode = this.convert!(lua.Declaration)(member);
                 if (luaNode)
-                    members ~= luaNode;
+                {
+                    // Flatten immediately, so that we can get access
+                    // to members when we generate our table representation
+                    // TODO: Handle multiple levels of nesting
+                    if (auto group = cast(lua.GroupDecl)luaNode)
+                        members ~= group.members;
+                    else
+                        members ~= luaNode;
+                }
             }
         }
 
