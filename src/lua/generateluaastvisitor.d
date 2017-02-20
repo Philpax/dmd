@@ -656,7 +656,7 @@ public:
         this.storeNode(func, luaFunction);
 
         // HACK: Only emit the self variable if we're dealing with a struct
-        if (func.vthis)
+        if (func.vthis && func.vthis.type.ty == d.Tstruct)
             luaFunction.arguments ~= new lua.Variable(luaFunction, "self", null);
 
         if (func.parameters)
