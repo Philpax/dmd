@@ -206,9 +206,25 @@ public:
 
     override void visit(d.StructDeclaration _struct)
     {
+        import ddmd.dmangle : mangleToBuffer;
+        import std.string : fromStringz;
+
+        // Generate the mangled name for this struct
+        string name;
+        if (_struct.lua)
+        {
+            name = _struct.ident.toDString();
+        }
+        else
+        {
+            OutBuffer buf;
+            _struct.mangleToBuffer(&buf);
+            name = "s" ~ buf.extractString.fromStringz.idup;
+        }
+
         // Generate the struct declaration in the Lua AST
         // (which is not actually represented in the final code)
-        auto luaStruct = new lua.Struct(null, _struct.ident.toDString(), []);
+        auto luaStruct = new lua.Struct(null, name, []);
         this.storeNode(_struct, luaStruct);
 
         auto parent = this.convert!(lua.Declaration)(_struct.parent);
@@ -341,8 +357,7 @@ public:
         // Build entries for the top scope
         lua.Declaration[] topScope;
         // Table variable
-        topScope ~= new lua.Variable(
-            this.mod, luaStruct.name, structTable);
+        topScope ~= new lua.Variable(this.mod, luaStruct.name, structTable);
 
         // Generate setmetatable calls for init/table
         // Set metatable for .init
