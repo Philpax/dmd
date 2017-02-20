@@ -785,7 +785,11 @@ public:
 
     override void visit(d.DeclarationExp expr)
     {
-        this.node = new lua.DeclarationExpr(this.convert!(lua.Declaration)(expr.declaration));
+        auto decl = this.convert!(lua.Declaration)(expr.declaration);
+        if (decl !is null)
+            this.node = new lua.DeclarationExpr(decl);
+        else
+            this.node = null;
     }
 
     override void visit(d.BinExp expr)
