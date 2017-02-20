@@ -444,6 +444,11 @@ public:
     override void visit(d.ExpStatement stmt)
     {
         auto expr = this.convert!(lua.Expression)(stmt.exp);
+        if (expr is null)
+        {
+            this.node = null;
+            return;
+        }
         // Rewrite a = (b = (c = d)) into separate statements
         if (auto assignExpr = cast(lua.Assign)expr)
         {
