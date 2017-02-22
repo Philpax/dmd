@@ -111,7 +111,7 @@ public:
         this.mod = luaModule;
         if (mod.members)
         {
-            foreach (member; (*mod.members)[])
+            foreach (member; *mod.members)
             {
                 auto luaNode = this.convert!(lua.Declaration)(member);
                 if (luaNode)
@@ -134,7 +134,7 @@ public:
             this.storeNode(attrib, node);
 
             lua.Declaration[] decls;
-            foreach (decl; (*members)[])
+            foreach (decl; *members)
             {
                 // Only accept certain kinds of declarations for now
                 bool skippableDecl =
@@ -167,7 +167,7 @@ public:
         lua.Declaration[] members = [];
         if (nspace.members)
         {
-            foreach (member; (*nspace.members)[])
+            foreach (member; *nspace.members)
             {
                 auto luaNode = this.convert!(lua.Declaration)(member);
                 if (luaNode)
@@ -192,7 +192,7 @@ public:
         lua.Declaration[] members = [];
         if (ti.members)
         {
-            foreach (member; (*ti.members)[])
+            foreach (member; *ti.members)
             {
                 auto luaNode = this.convert!(lua.Declaration)(member);
                 if (luaNode)
@@ -233,7 +233,7 @@ public:
         lua.Declaration[] members = [];
         if (_struct.members)
         {
-            foreach (member; (*_struct.members)[])
+            foreach (member; *_struct.members)
             {
                 auto luaNode = this.convert!(lua.Declaration)(member);
                 if (luaNode)
@@ -394,7 +394,7 @@ public:
         lua.Declaration[] members = [];
         if (_class.members)
         {
-            foreach (member; (*_class.members)[])
+            foreach (member; *_class.members)
             {
                 auto luaNode = this.convert!(lua.Declaration)(member);
                 if (luaNode)
@@ -454,7 +454,7 @@ public:
         lua.Statement[] members = [];
         if (stmt.statements)
         {
-            foreach (member; (*stmt.statements)[])
+            foreach (member; *stmt.statements)
             {
                 auto luaNode = this.convert!(lua.Statement)(member);
                 if (luaNode)
@@ -545,7 +545,7 @@ public:
         lua.Statement[] members = [];
         if (stmt.statements)
         {
-            foreach (member; (*stmt.statements)[])
+            foreach (member; *stmt.statements)
             {
                 auto luaNode = this.convert!(lua.Statement)(member);
                 if (luaNode)
@@ -588,7 +588,7 @@ public:
 
     override void visit(d.SwitchStatement stmt)
     {
-        if (stmt.cases is null || (*stmt.cases)[].length == 0)
+        if (stmt.cases is null || stmt.cases.dim == 0)
         {
             this.node = null;
             return;
@@ -692,7 +692,7 @@ public:
 
         if (func.parameters)
         {
-            foreach (parameter; (*func.parameters)[])
+            foreach (parameter; *func.parameters)
                 luaFunction.arguments ~= this.convert!(lua.Variable)(parameter);
         }
 
@@ -722,7 +722,7 @@ public:
 
         if (func.parameters)
         {
-            foreach (parameter; (*func.parameters)[])
+            foreach (parameter; *func.parameters)
                 luaFunction.arguments ~= this.convert!(lua.Variable)(parameter);
         }
 
@@ -946,7 +946,7 @@ public:
 
         if (expr.arguments)
         {
-            foreach (argument; (*expr.arguments)[])
+            foreach (argument; *expr.arguments)
                 arguments ~= this.convert!(lua.Expression)(argument);
         }
 
@@ -1017,7 +1017,7 @@ public:
         lua.Expression[] fields;
         if (expr.elements)
         {
-            foreach (field; (*expr.elements)[])
+            foreach (field; *expr.elements)
                 fields ~= this.convert!(lua.Expression)(field);
         }
 
@@ -1078,7 +1078,7 @@ public:
         lua.Expression[] elements;
         if (expr.elements)
         {
-            foreach (elem; (*expr.elements)[])
+            foreach (elem; *expr.elements)
                 elements ~= this.convert!(lua.Expression)(elem);
         }
         this.node = new lua.ArrayLiteral(elements);
