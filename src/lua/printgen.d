@@ -161,15 +161,15 @@ class CodeGenerator
                 mixin(Scope);
                 if (stmt._init)
                     stmt._init.accept(this);
-                
+
                 writeIndent();
                 buf.printf("while ");
                 stmt.condition.accept(this);
                 buf.printf(" do\n");
-                
+
                 stmt._body.accept(this);
                 {
-                    mixin(Scope);                    
+                    mixin(Scope);
                     writeIndent();
                     stmt.increment.accept(this);
                     buf.printf("\n");
@@ -204,7 +204,7 @@ class CodeGenerator
         }
 
         void writeIfStatement(d.IfStatement stmt)
-        {   
+        {
             buf.printf("if ");
             stmt.condition.accept(this);
             buf.printf(" then\n");
@@ -215,7 +215,7 @@ class CodeGenerator
             {
                 writeIndent();
                 buf.printf("else");
-                
+
                 if (auto elseIfStmt = stmt.elsebody.isIfStatement())
                 {
                     writeIfStatement(elseIfStmt);
@@ -246,7 +246,7 @@ class CodeGenerator
         // ---------------- Expressions
         override void visit(d.Expression expr)
         {
-            buf.printf("--[[UNIMPL-EXPR %s: %s (%s)]]", 
+            buf.printf("--[[UNIMPL-EXPR %s: %s (%s)]]",
                 d.Token.toChars(expr.op), expr.toChars(), expr.type ? expr.type.toChars() : "");
         }
 
@@ -324,7 +324,7 @@ class CodeGenerator
                 {
                     if (!first)
                         buf.printf(", ");
-                        
+
                     arg.accept(this);
                     first = false;
                 }
@@ -418,7 +418,7 @@ class CodeGenerator
         override void visit(d.StructLiteralExp expr)
         {
             buf.printf("%s(", expr.sd.ident.toChars());
-            
+
             if (expr.elements)
             {
                 for (size_t i = 0; i < expr.elements.dim; i++)
@@ -450,7 +450,7 @@ class CodeGenerator
                     expr.e2.accept(this);
                     buf.printf("\n");
                 }
-    
+
                 writeIndent();
                 buf.printf("end)()");
             }
@@ -471,7 +471,7 @@ class CodeGenerator
             import ddmd.dmangle : mangleExact;
 
             auto fnDecl = expr.var.isFuncDeclaration();
-            
+
             if (!fnDecl)
                 return expr.error("can't compile %s: only functions supported", expr.toChars());
 
@@ -575,7 +575,7 @@ class CodeGenerator
                         return;
                     }
                     else
-                    {   
+                    {
                         buf.printf("%s = ", decl.ident.toChars());
                     }
                 }
@@ -703,7 +703,7 @@ class CodeGenerator
             writeIndent();
             buf.writestring("})");
         }
-        
+
         // ---------------- Initializers
         override void visit(d.Initializer init)
         {
@@ -730,7 +730,7 @@ class CodeGenerator
                 printf("generate %s %s\n", member.kind(), member.toChars());
 
             member.accept(visitor);
-            
+
             if (!member.isTemplateDeclaration())
                 buf.printf("\n");
         }

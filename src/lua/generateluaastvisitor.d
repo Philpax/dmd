@@ -290,7 +290,7 @@ public:
 
         // Build up the init/metatables
         // Values contained within __index (i.e. functions)
-        KV[] indexValues; 
+        KV[] indexValues;
         lua.Variable[] constructorArgs;
         foreach (member; luaStruct.members)
         {
@@ -325,7 +325,7 @@ public:
             luaStruct, constructorArgs, constructorBody);
 
         auto constructorSelf = new lua.Variable(constructor, "self",
-            new lua.Call(this.rtDeepCopy, null, 
+            new lua.Call(this.rtDeepCopy, null,
                 [new lua.DotVariable(structRef, this.init)]
             )
         );
@@ -465,8 +465,8 @@ public:
     }
 
     override void visit(d.ScopeStatement stmt)
-    { 
-        this.node = new lua.Scope(this.convert!(lua.Statement)(stmt.statement)); 
+    {
+        this.node = new lua.Scope(this.convert!(lua.Statement)(stmt.statement));
     }
 
     override void visit(d.ExpStatement stmt)
@@ -507,7 +507,7 @@ public:
             this.node = new lua.ExpressionStmt(expr);
         }
     }
-    
+
     override void visit(d.ForStatement stmt)
     {
         // Keep an array of statements to go into the result group, and
@@ -535,7 +535,7 @@ public:
         // Add our while to the final result
         resultStmts ~= new lua.While(
             this.convert!(lua.Expression)(stmt.condition), bodyStmt
-        ); 
+        );
 
         this.node = new lua.GroupStmt(resultStmts);
     }
@@ -605,7 +605,7 @@ public:
                 ),
                 this.convertConditionalBody(caseStmt.statement),
                 null
-            ); 
+            );
         }
 
         // Link each if statement's else to the next if statement
@@ -758,7 +758,7 @@ public:
         {
             if (auto exprInit = decl._init.isExpInitializer())
             {
-                if (exprInit.exp.op == d.TOKconstruct || 
+                if (exprInit.exp.op == d.TOKconstruct ||
                     exprInit.exp.op == d.TOKassign ||
                     exprInit.exp.op == d.TOKblit)
                 {
@@ -770,7 +770,7 @@ public:
                         init = new lua.DotVariable(init, this.init);
                         init = new lua.Call(this.rtDeepCopy, null, [init]);
                     }
-                } 
+                }
                 else
                 {
                     init = this.convert!(lua.Expression)(exprInit.exp);
@@ -781,7 +781,7 @@ public:
         {
             if (decl.type.ty == d.Tarray || decl.type.ty == d.Tsarray)
                 init = new lua.ArrayLiteral([]);
-        } 
+        }
         node.parent = this.convert!(lua.Declaration)(decl.parent);
         node.initializer = init;
         this.node = node;
@@ -831,7 +831,7 @@ public:
     override void visit(d.RealExp expr)
     {
         this.node = new lua.Real(expr.value);
-    } 
+    }
 
     override void visit(d.DeclarationExp expr)
     {
@@ -1062,7 +1062,7 @@ public:
         auto e = expr.e1;
         // If this is an array, and it's an identity slice, pass it through
         // Otherwise, treat it as an unsupported node
-        if (e.type && (e.type.ty == d.Tsarray || e.type.ty == d.Tarray) && 
+        if (e.type && (e.type.ty == d.Tsarray || e.type.ty == d.Tarray) &&
             expr.upr is null && expr.lwr is null)
         {
             this.node = this.convert!(lua.Expression)(e);

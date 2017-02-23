@@ -45,12 +45,12 @@ void codegen(OutBuffer* buf, d.Module* mod)
         printf("lua-cg\tgenerate Lua AST\n");
     auto generateLuaAST = new GenerateLuaASTVisitor();
     auto moduleNode = generateLuaAST.convert!(lua.Module)(*mod);
-    
+
     if (global.params.verbose)
         printf("lua-cg\tflatten Lua AST\n");
     auto flattenBlock = new FlattenBlockVisitor();
-    moduleNode.accept(flattenBlock); 
-    
+    moduleNode.accept(flattenBlock);
+
     if (global.params.verbose)
         printf("lua-cg\tprint Lua AST\n");
     auto print = new PrintVisitor(buf);

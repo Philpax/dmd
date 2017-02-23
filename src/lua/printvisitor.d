@@ -145,7 +145,7 @@ public:
     override void visit(lua.Scope s)
     {
         this.writeLine("do");
-        s.stmt.accept(this); 
+        s.stmt.accept(this);
         this.writeLine("end");
     }
 
@@ -169,7 +169,7 @@ public:
         w.condition.accept(this);
         this.write(" do\n");
         w._body.accept(this);
-        this.writeLine("end");    
+        this.writeLine("end");
     }
 
     void writeIfStatement(lua.If i)
@@ -279,7 +279,7 @@ public:
         }
         this.resetScope(len);
     }
-    
+
     override void visit(lua.Variable v)
     {
         if (v.parent != this.mod)

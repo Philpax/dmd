@@ -14,7 +14,7 @@ int main(string[] args)
 
         foreach (_; 0..pad)
             io.write(" ");
-        
+
         foreach (_; 0..math.abs(y))
             io.write("#");
 

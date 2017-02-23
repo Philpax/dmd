@@ -39,7 +39,7 @@ end
 function Color(r, g, b)
     local mt = {}
     mt.__add = function(x, y)
-        local t = {r = x.r + y.r, g = x.g + y.g, b = x.b + y.b} 
+        local t = {r = x.r + y.r, g = x.g + y.g, b = x.b + y.b}
         setmetatable(t, mt)
         return t
     end
